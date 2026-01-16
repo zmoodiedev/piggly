@@ -18,65 +18,115 @@ function LoginContent() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #F8F9FC 0%, #EEF0F5 100%)',
+      background: 'linear-gradient(135deg, #1A1D2E 0%, #2D3348 50%, #1A1D2E 100%)',
       padding: '20px',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
+      {/* Decorative background elements */}
       <div style={{
-        background: 'white',
+        position: 'absolute',
+        top: '-20%',
+        right: '-10%',
+        width: '600px',
+        height: '600px',
+        background: 'radial-gradient(circle, rgba(255, 123, 156, 0.15) 0%, transparent 70%)',
+        borderRadius: '50%',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '-30%',
+        left: '-15%',
+        width: '800px',
+        height: '800px',
+        background: 'radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%)',
+        borderRadius: '50%',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: '20%',
+        left: '10%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
+        borderRadius: '50%',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Floating card */}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.98)',
         borderRadius: '24px',
-        padding: '48px',
-        maxWidth: '400px',
+        padding: '48px 40px',
+        maxWidth: '420px',
         width: '100%',
-        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
         textAlign: 'center',
+        position: 'relative',
+        zIndex: 1,
+        animation: 'fadeInUp 0.6s ease-out',
       }}>
-        {/* Logo/Title */}
+        {/* Logo */}
         <div style={{
-          width: '64px',
-          height: '64px',
+          width: '72px',
+          height: '72px',
           background: 'linear-gradient(135deg, #FF7B9C 0%, #FF6B9D 100%)',
-          borderRadius: '16px',
+          borderRadius: '20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 24px',
+          margin: '0 auto 28px',
+          boxShadow: '0 10px 30px -5px rgba(255, 123, 156, 0.4)',
         }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="1" x2="12" y2="23" />
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
           </svg>
         </div>
 
         <h1 style={{
-          fontSize: '28px',
+          fontSize: '32px',
           fontWeight: 700,
           color: '#1A1D2E',
           margin: '0 0 8px 0',
+          letterSpacing: '-0.5px',
         }}>
           inDebt
         </h1>
 
         <p style={{
           color: '#6B7280',
-          margin: '0 0 32px 0',
-          fontSize: '14px',
+          margin: '0 0 36px 0',
+          fontSize: '15px',
+          lineHeight: 1.5,
         }}>
-          Sign in to access your personal finance dashboard
+          Your personal finance dashboard.<br />
+          Track spending, manage debt, reach goals.
         </p>
 
         {error && (
           <div style={{
-            background: '#FEE2E2',
-            border: '1px solid #FECACA',
+            background: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)',
             borderRadius: '12px',
-            padding: '12px 16px',
+            padding: '14px 18px',
             marginBottom: '24px',
             color: '#DC2626',
             fontSize: '14px',
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
           }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
             {error === 'AccessDenied'
-              ? 'Access denied. Your email is not on the allowlist.'
-              : 'An error occurred during sign in. Please try again.'}
+              ? 'Access denied. Your email is not authorized.'
+              : 'Sign in failed. Please try again.'}
           </div>
         )}
 
@@ -88,26 +138,30 @@ function LoginContent() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '12px',
-            padding: '14px 24px',
+            padding: '16px 24px',
             background: 'white',
-            border: '1px solid #E5E7EB',
-            borderRadius: '12px',
-            fontSize: '15px',
-            fontWeight: 500,
+            border: '2px solid #E5E7EB',
+            borderRadius: '14px',
+            fontSize: '16px',
+            fontWeight: 600,
             color: '#1A1D2E',
             cursor: 'pointer',
-            transition: 'all 0.2s',
+            transition: 'all 0.2s ease',
           }}
           onMouseOver={(e) => {
             e.currentTarget.style.background = '#F8F9FC';
-            e.currentTarget.style.borderColor = '#D1D5DB';
+            e.currentTarget.style.borderColor = '#FF7B9C';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 8px 20px -5px rgba(255, 123, 156, 0.3)';
           }}
           onMouseOut={(e) => {
             e.currentTarget.style.background = 'white';
             e.currentTarget.style.borderColor = '#E5E7EB';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24">
+          <svg width="22" height="22" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -128,14 +182,34 @@ function LoginContent() {
           Continue with Google
         </button>
 
-        <p style={{
-          marginTop: '24px',
-          fontSize: '12px',
-          color: '#9CA3AF',
+        <div style={{
+          marginTop: '32px',
+          paddingTop: '24px',
+          borderTop: '1px solid #F3F4F6',
         }}>
-          Only authorized users can access this app
-        </p>
+          <p style={{
+            fontSize: '13px',
+            color: '#9CA3AF',
+            margin: 0,
+          }}>
+            Private dashboard for authorized users only
+          </p>
+        </div>
       </div>
+
+      {/* CSS Animation */}
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -148,16 +222,21 @@ export default function LoginPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #F8F9FC 0%, #EEF0F5 100%)',
+        background: 'linear-gradient(135deg, #1A1D2E 0%, #2D3348 50%, #1A1D2E 100%)',
       }}>
         <div style={{
-          width: '32px',
-          height: '32px',
-          border: '2px solid #FF7B9C',
-          borderTopColor: 'transparent',
+          width: '40px',
+          height: '40px',
+          border: '3px solid rgba(255, 123, 156, 0.3)',
+          borderTopColor: '#FF7B9C',
           borderRadius: '50%',
           animation: 'spin 1s linear infinite',
         }} />
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     }>
       <LoginContent />
