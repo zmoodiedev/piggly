@@ -1,0 +1,279 @@
+/* Transactions page styles */
+.transactions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.transactions-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1A1D2E;
+  margin: 0;
+}
+
+.transactions-subtitle {
+  color: #6B7280;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.transactions-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #FF7B9C 0%, #FF6B9D 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.transactions-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 123, 156, 0.4);
+}
+
+/* Summary cards */
+.transactions-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.transactions-summary-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #F3F4F6;
+}
+
+.transactions-summary-card.gradient {
+  background: linear-gradient(135deg, #FF7B9C 0%, #FF6B9D 100%);
+  border: none;
+}
+
+.transactions-summary-card.gradient .transactions-summary-label,
+.transactions-summary-card.gradient .transactions-summary-value {
+  color: white;
+}
+
+.transactions-summary-label {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0 0 8px 0;
+}
+
+.transactions-summary-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1A1D2E;
+  margin: 0;
+}
+
+.transactions-summary-value.negative {
+  color: #EF4444;
+}
+
+/* Transaction list */
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transactions-empty {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 48px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #F3F4F6;
+}
+
+.transactions-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  background: #F3F4F6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9CA3AF;
+}
+
+.transactions-empty-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1D2E;
+  margin: 0 0 8px 0;
+}
+
+.transactions-empty-text {
+  color: #6B7280;
+  margin: 0;
+}
+
+/* Month divider */
+.transactions-month-divider {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B7280;
+  padding: 16px 0 8px;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 12px;
+}
+
+/* Transaction card */
+.transaction-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #F3F4F6;
+  transition: all 0.2s ease;
+}
+
+.transaction-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.transaction-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.transaction-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.transaction-card-icon.groceries { background: #DCFCE7; }
+.transaction-card-icon.eating-out { background: #FEF3C7; }
+.transaction-card-icon.entertainment { background: #EDE9FE; }
+.transaction-card-icon.clothing { background: #FCE7F3; }
+.transaction-card-icon.transportation { background: #DBEAFE; }
+.transaction-card-icon.healthcare { background: #FEE2E2; }
+.transaction-card-icon.personal-care { background: #F3E8FF; }
+.transaction-card-icon.gifts { background: #FECACA; }
+.transaction-card-icon.education { background: #CFFAFE; }
+.transaction-card-icon.travel { background: #D1FAE5; }
+.transaction-card-icon.shopping { background: #FED7AA; }
+.transaction-card-icon.other { background: #F3F4F6; }
+
+.transaction-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.transaction-card-description {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A1D2E;
+  margin: 0;
+}
+
+.transaction-card-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.transaction-card-category {
+  color: #6B7280;
+  text-transform: capitalize;
+}
+
+.transaction-card-date {
+  color: #9CA3AF;
+}
+
+.transaction-card-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.transaction-card-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #EF4444;
+}
+
+.transaction-card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.transaction-card-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #9CA3AF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.transaction-card-action-btn:hover {
+  background: #F3F4F6;
+  color: #1A1D2E;
+}
+
+.transaction-card-action-btn.delete:hover {
+  background: #FEE2E2;
+  color: #EF4444;
+}
+
+/* Filter tabs */
+.transactions-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.transactions-filter-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #E5E7EB;
+  background: white;
+  color: #6B7280;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.transactions-filter-btn:hover {
+  border-color: #FF7B9C;
+  color: #FF7B9C;
+}
+
+.transactions-filter-btn.active {
+  background: #FF7B9C;
+  border-color: #FF7B9C;
+  color: white;
+}
