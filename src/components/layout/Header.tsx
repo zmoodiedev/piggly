@@ -34,9 +34,8 @@ export default function Header({ currency, onCurrencyChange }: HeaderProps) {
         padding: isMobile ? '12px 16px 12px 60px' : '0 24px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: isMobile ? '8px' : '16px',
-        flexWrap: isMobile ? 'wrap' : 'nowrap',
+        justifyContent: isMobile ? 'center' : 'space-between',
+        gap: isMobile ? '12px' : '16px',
       }}
     >
       {/* Month selector - always visible */}

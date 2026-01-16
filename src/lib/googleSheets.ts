@@ -39,6 +39,10 @@ function getGoogleSheetsClient() {
     credentials = JSON.parse(fileContent);
   } else if (process.env.GOOGLE_CREDENTIALS) {
     credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+    // Fix private key newlines that may get corrupted in environment variables
+    if (credentials.private_key) {
+      credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+    }
   } else {
     throw new Error('Missing Google credentials. Either place credentials.json in project root or set GOOGLE_CREDENTIALS environment variable.');
   }
