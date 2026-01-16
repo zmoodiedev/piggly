@@ -98,7 +98,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   // On desktop: show collapsed (72px), expand on hover
   // On mobile: hidden by default, show full width when open
-  const isExpanded = isHovered;
+  const isExpanded = isHovered || isOpen;
 
   return (
     <>

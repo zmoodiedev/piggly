@@ -133,7 +133,7 @@ export default function Home() {
       {/* Spending & Budget breakdown row */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
         gap: '24px'
       }}>
         <div style={{ minWidth: 0 }}>

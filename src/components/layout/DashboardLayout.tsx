@@ -33,15 +33,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           style={{
             position: 'fixed',
             top: '16px',
-            left: '16px',
+            left: sidebarOpen ? '256px' : '16px',
             zIndex: 60,
             padding: '8px',
             borderRadius: '12px',
-            background: '#1A1D2E',
+            background: sidebarOpen ? 'rgba(0,0,0,0.5)' : '#1A1D2E',
             color: 'white',
             border: 'none',
             cursor: 'pointer',
             boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+            transition: 'left 0.3s ease-in-out, background 0.3s ease-in-out',
           }}
           aria-label="Toggle menu"
         >

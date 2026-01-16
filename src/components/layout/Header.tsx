@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { Currency } from '@/types';
 import { MonthSelector } from '@/components/ui';
@@ -12,8 +12,15 @@ interface HeaderProps {
 
 export default function Header({ currency, onCurrencyChange }: HeaderProps) {
   const { data: session } = useSession();
-  const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <header
@@ -21,63 +28,22 @@ export default function Header({ currency, onCurrencyChange }: HeaderProps) {
         position: 'sticky',
         top: 0,
         zIndex: 30,
-        height: '64px',
+        minHeight: '64px',
         background: '#FFFFFF',
         borderBottom: '1px solid #E5E7EB',
-        padding: '0 24px',
+        padding: isMobile ? '12px 16px 12px 60px' : '0 24px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: '16px',
+        gap: isMobile ? '8px' : '16px',
+        flexWrap: isMobile ? 'wrap' : 'nowrap',
       }}
     >
-      {/* Search bar */}
-      <div style={{ flex: 1, maxWidth: '400px' }}>
-        <div style={{ position: 'relative', width: '100%' }}>
-          <input
-            type="text"
-            placeholder="Search transactions, bills..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              height: '40px',
-              paddingLeft: '40px',
-              paddingRight: '16px',
-              background: '#F8F9FC',
-              border: '1px solid #E5E7EB',
-              borderRadius: '12px',
-              fontSize: '14px',
-              color: '#1A1D2E',
-              outline: 'none',
-            }}
-          />
-          <svg
-            style={{
-              position: 'absolute',
-              left: '12px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#9CA3AF',
-            }}
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Month selector */}
-      <MonthSelector />
+      {/* Month selector - always visible */}
+      <MonthSelector compact={isMobile} />
 
       {/* Right side actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px', flexShrink: 0 }}>
         {/* Currency toggle */}
         <div
           style={{
@@ -87,13 +53,14 @@ export default function Header({ currency, onCurrencyChange }: HeaderProps) {
             borderRadius: '12px',
             padding: '4px',
             border: '1px solid #E5E7EB',
+            flexShrink: 0,
           }}
         >
           <button
             onClick={() => onCurrencyChange('CAD')}
             style={{
-              padding: '6px 12px',
-              fontSize: '14px',
+              padding: isMobile ? '6px 8px' : '6px 12px',
+              fontSize: isMobile ? '12px' : '14px',
               fontWeight: 500,
               borderRadius: '8px',
               border: 'none',
@@ -109,8 +76,8 @@ export default function Header({ currency, onCurrencyChange }: HeaderProps) {
           <button
             onClick={() => onCurrencyChange('USD')}
             style={{
-              padding: '6px 12px',
-              fontSize: '14px',
+              padding: isMobile ? '6px 8px' : '6px 12px',
+              fontSize: isMobile ? '12px' : '14px',
               fontWeight: 500,
               borderRadius: '8px',
               border: 'none',
@@ -127,14 +94,14 @@ export default function Header({ currency, onCurrencyChange }: HeaderProps) {
 
         {/* User menu */}
         {session?.user && (
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', flexShrink: 0 }}>
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '6px 12px',
+                padding: '6px',
                 borderRadius: '12px',
                 border: '1px solid #E5E7EB',
                 background: 'white',
@@ -170,20 +137,22 @@ export default function Header({ currency, onCurrencyChange }: HeaderProps) {
                   {session.user.name?.charAt(0) || session.user.email?.charAt(0) || '?'}
                 </div>
               )}
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#6B7280"
-                strokeWidth="2"
-                style={{
-                  transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s',
-                }}
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+              {!isMobile && (
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#6B7280"
+                  strokeWidth="2"
+                  style={{
+                    transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s',
+                  }}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              )}
             </button>
 
             {/* Dropdown menu */}

@@ -29,6 +29,12 @@
   cursor: not-allowed;
 }
 
+.month-selector-arrow.compact {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
 .month-selector-current {
   position: relative;
 }
@@ -57,6 +63,18 @@
 
 .month-selector-label svg {
   color: #9CA3AF;
+}
+
+.month-selector-label.compact {
+  padding: 6px 10px;
+  font-size: 13px;
+  min-width: auto;
+  gap: 4px;
+}
+
+.month-selector-label.compact svg {
+  width: 14px;
+  height: 14px;
 }
 
 .month-selector-backdrop {
