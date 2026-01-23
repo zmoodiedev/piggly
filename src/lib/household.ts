@@ -20,39 +20,67 @@ export interface Household {
  * Gets or creates a household for a user.
  *
  * Logic:
- * 1. Check if user already has a household membership -> return that household
- * 2. Check if user has a pending invite (by email) -> join that household
- * 3. Otherwise -> create a new household with user as owner
+ * 1. Check if user already has a household membership by user_id -> return that household
+ * 2. Check if user has an existing membership by email -> update user_id and return that household
+ * 3. Check if user has a pending invite (by email) -> convert to active and return that household
+ * 4. Otherwise -> create a new household with user as owner
  */
 export async function getOrCreateHouseholdForUser(
   userId: string,
   email: string
 ): Promise<string> {
-  // 1. Check if user already has a household membership
-  const { data: existingMembership, error: membershipError } = await supabase
+  const normalizedEmail = email.toLowerCase();
+
+  // 1. Check if user already has a household membership by user_id
+  // Use limit(1) instead of single() to handle multiple rows gracefully
+  const { data: membershipsByUserId, error: userIdError } = await supabase
     .from('household_members')
     .select('household_id')
     .eq('user_id', userId)
-    .single();
+    .limit(1);
 
-  if (existingMembership) {
+  if (userIdError) {
+    console.error('Error checking membership by user_id:', userIdError);
+  }
+
+  if (membershipsByUserId && membershipsByUserId.length > 0) {
+    return membershipsByUserId[0].household_id;
+  }
+
+  // 2. Check if user has an existing active membership by email (different user_id)
+  // This handles cases where user_id changed between sessions
+  const { data: membershipsByEmail, error: emailError } = await supabase
+    .from('household_members')
+    .select('id, household_id, user_id')
+    .eq('email', normalizedEmail)
+    .not('user_id', 'like', 'pending:%')
+    .limit(1);
+
+  if (emailError) {
+    console.error('Error checking membership by email:', emailError);
+  }
+
+  if (membershipsByEmail && membershipsByEmail.length > 0) {
+    const existingMembership = membershipsByEmail[0];
+    // Update the user_id to the current one
+    await supabase
+      .from('household_members')
+      .update({ user_id: userId })
+      .eq('id', existingMembership.id);
+
     return existingMembership.household_id;
   }
 
-  // If error is not "no rows returned", log it
-  if (membershipError && membershipError.code !== 'PGRST116') {
-    console.error('Error checking existing membership:', membershipError);
-  }
-
-  // 2. Check for pending invite by email (user_id starts with 'pending:')
-  const { data: pendingInvite } = await supabase
+  // 3. Check for pending invite by email
+  const { data: pendingInvites } = await supabase
     .from('household_members')
     .select('id, household_id')
-    .eq('email', email.toLowerCase())
+    .eq('email', normalizedEmail)
     .like('user_id', 'pending:%')
-    .single();
+    .limit(1);
 
-  if (pendingInvite) {
+  if (pendingInvites && pendingInvites.length > 0) {
+    const pendingInvite = pendingInvites[0];
     // Convert pending invite to active membership
     await supabase
       .from('household_members')
@@ -62,7 +90,7 @@ export async function getOrCreateHouseholdForUser(
     return pendingInvite.household_id;
   }
 
-  // 3. Create a new household with user as owner
+  // 4. Create a new household with user as owner
   const { data: newHousehold, error: householdError } = await supabase
     .from('households')
     .insert({ name: 'My Household' })
@@ -79,7 +107,7 @@ export async function getOrCreateHouseholdForUser(
     .insert({
       household_id: newHousehold.id,
       user_id: userId,
-      email: email.toLowerCase(),
+      email: normalizedEmail,
       role: 'owner',
     });
 
