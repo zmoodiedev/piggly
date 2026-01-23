@@ -3,6 +3,7 @@
 import { Income } from '@/types';
 import { useCurrency } from '@/lib/context/CurrencyContext';
 import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { incomeCategoryIcons, incomeCategoryLabels } from '@/lib/categories';
 import { format } from 'date-fns';
 
 interface IncomeCardProps {
@@ -28,14 +29,14 @@ export default function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps
     <div className="income-card">
       <div className="income-card-left">
         <div className="income-card-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="1" x2="12" y2="23" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
+          {incomeCategoryIcons[income.category] || '💵'}
         </div>
         <div className="income-card-info">
           <h3 className="income-card-source">{income.source}</h3>
           <div className="income-card-details">
+            <span className="income-card-category">
+              {incomeCategoryLabels[income.category] || income.category}
+            </span>
             <span className="income-card-date">
               {formatDate(income.date)}
             </span>

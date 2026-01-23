@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
+import { getOrCreateHouseholdForUser } from '@/lib/household';
 
 // Get allowed emails from environment variable (comma-separated)
 const getAllowedEmails = (): string[] => {
@@ -43,10 +44,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return true;
     },
+    async jwt({ token, user }) {
+      // On initial sign-in, resolve the household
+      if (user && token.sub && user.email) {
+        try {
+          const householdId = await getOrCreateHouseholdForUser(token.sub, user.email);
+          (token as { householdId?: string }).householdId = householdId;
+        } catch (error) {
+          console.error('Failed to resolve household:', error);
+        }
+      }
+      return token;
+    },
     async session({ session, token }) {
-      // Add user id to session
-      if (token.sub) {
-        session.user.id = token.sub;
+      // Add user id and householdId to session
+      const extendedUser = session.user as { id?: string; householdId?: string };
+      const extendedToken = token as { sub?: string; householdId?: string };
+      if (extendedToken.sub) {
+        extendedUser.id = extendedToken.sub;
+      }
+      if (extendedToken.householdId) {
+        extendedUser.householdId = extendedToken.householdId;
       }
       return session;
     },

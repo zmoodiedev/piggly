@@ -1,29 +1,22 @@
 // Supabase database type definitions
 // These types match the database schema with snake_case column names
 
+import { ExpenseCategory, IncomeCategory } from '@/lib/categories';
+
 export type DebtCategory = 'credit-card' | 'loan' | 'mortgage' | 'other';
-export type BillCategory = 'utilities' | 'subscription' | 'insurance' | 'housing' | 'harrison' | 'debt' | 'other';
 export type BillFrequency = 'monthly' | 'quarterly' | 'annually';
 export type SavingsCategory = 'emergency' | 'vacation' | 'purchase' | 'retirement' | 'other';
-export type TransactionCategory =
-  | 'groceries'
-  | 'eating-out'
-  | 'entertainment'
-  | 'clothing'
-  | 'transportation'
-  | 'healthcare'
-  | 'personal-care'
-  | 'gifts'
-  | 'education'
-  | 'travel'
-  | 'shopping'
-  | 'other';
 export type Currency = 'CAD' | 'USD';
+
+// Re-export for backward compatibility
+export type BillCategory = ExpenseCategory;
+export type TransactionCategory = ExpenseCategory;
 
 // Database row types (snake_case)
 export interface DbDebt {
   id: string;
   user_id: string;
+  household_id: string;
   name: string;
   total_amount: number;
   current_balance: number;
@@ -39,10 +32,11 @@ export interface DbDebt {
 export interface DbBill {
   id: string;
   user_id: string;
+  household_id: string;
   name: string;
   amount: number;
   due_date: number;
-  category: BillCategory;
+  category: ExpenseCategory;
   is_recurring: boolean;
   frequency: BillFrequency;
   is_paid: boolean;
@@ -56,6 +50,7 @@ export interface DbBill {
 export interface DbSavingsGoal {
   id: string;
   user_id: string;
+  household_id: string;
   name: string;
   target_amount: number;
   current_amount: number;
@@ -69,8 +64,10 @@ export interface DbSavingsGoal {
 export interface DbIncome {
   id: string;
   user_id: string;
+  household_id: string;
   amount: number;
   source: string;
+  category: IncomeCategory;
   date: string;
   notes: string | null;
   currency: Currency;
@@ -81,8 +78,9 @@ export interface DbIncome {
 export interface DbTransaction {
   id: string;
   user_id: string;
+  household_id: string;
   amount: number;
-  category: TransactionCategory;
+  category: ExpenseCategory;
   description: string;
   date: string;
   currency: Currency;

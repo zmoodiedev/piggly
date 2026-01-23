@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Debt, Bill, SavingsGoal, Income, Transaction, TransactionCategory } from '@/types';
+import { Debt, Bill, SavingsGoal, Income, Transaction, ExpenseCategory } from '@/types';
 import { fetchDebts, fetchBills, fetchSavings, fetchIncome, fetchTransactions } from '@/lib/storage';
 import { startOfMonth, endOfMonth, isWithinInterval, subMonths, format } from 'date-fns';
 import { useMonth } from '@/lib/context/MonthContext';
+import { expenseCategoryColors, expenseCategoryLabels } from '@/lib/categories';
 
 export function useDashboardData() {
   const { monthStart, monthEnd, selectedDate } = useMonth();
@@ -105,30 +106,10 @@ export function useDashboardData() {
     return acc;
   }, {} as Record<string, number>);
 
-  const categoryColors: Record<string, string> = {
-    utilities: '#F59E0B',
-    subscription: '#7C3AED',
-    insurance: '#3B82F6',
-    housing: '#FF7B9C',
-    harrison: '#10B981',
-    debt: '#EF4444',
-    other: '#6B7280',
-  };
-
-  const categoryLabels: Record<string, string> = {
-    utilities: 'Utilities',
-    subscription: 'Subscriptions',
-    insurance: 'Insurance',
-    housing: 'Housing',
-    harrison: 'Harrison',
-    debt: 'Debt',
-    other: 'Other',
-  };
-
   const budgetBreakdown = Object.entries(billsByCategory).map(([category, value]) => ({
-    name: categoryLabels[category] || category,
+    name: expenseCategoryLabels[category as ExpenseCategory] || category,
     value,
-    color: categoryColors[category] || '#6B7280',
+    color: expenseCategoryColors[category as ExpenseCategory] || '#6B7280',
   }));
 
   // Calculate spending by category from transactions (this month)
@@ -136,36 +117,6 @@ export function useDashboardData() {
     const transactionDate = typeof t.date === 'string' ? new Date(t.date) : t.date;
     return isWithinInterval(transactionDate, { start: monthStart, end: monthEnd });
   });
-
-  const transactionCategoryColors: Record<TransactionCategory, string> = {
-    'groceries': '#10B981',
-    'eating-out': '#F59E0B',
-    'entertainment': '#8B5CF6',
-    'clothing': '#EC4899',
-    'transportation': '#3B82F6',
-    'healthcare': '#EF4444',
-    'personal-care': '#A855F7',
-    'gifts': '#F43F5E',
-    'education': '#06B6D4',
-    'travel': '#14B8A6',
-    'shopping': '#F97316',
-    'other': '#6B7280',
-  };
-
-  const transactionCategoryLabels: Record<TransactionCategory, string> = {
-    'groceries': 'Groceries',
-    'eating-out': 'Eating Out',
-    'entertainment': 'Entertainment',
-    'clothing': 'Clothing',
-    'transportation': 'Transportation',
-    'healthcare': 'Healthcare',
-    'personal-care': 'Personal Care',
-    'gifts': 'Gifts',
-    'education': 'Education',
-    'travel': 'Travel',
-    'shopping': 'Shopping',
-    'other': 'Other',
-  };
 
   const spendingByCategory = thisMonthTransactions.reduce((acc, t) => {
     const category = t.category;
@@ -178,9 +129,9 @@ export function useDashboardData() {
 
   const spendingBreakdown = Object.entries(spendingByCategory)
     .map(([category, value]) => ({
-      name: transactionCategoryLabels[category as TransactionCategory] || category,
+      name: expenseCategoryLabels[category as ExpenseCategory] || category,
       value,
-      color: transactionCategoryColors[category as TransactionCategory] || '#6B7280',
+      color: expenseCategoryColors[category as ExpenseCategory] || '#6B7280',
     }))
     .sort((a, b) => b.value - a.value);
 

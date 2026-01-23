@@ -164,6 +164,10 @@ export async function saveIncomeToSheet(income: Income[]): Promise<boolean> {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(income),
     });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Error saving income:', response.status, errorData);
+    }
     return response.ok;
   } catch (error) {
     console.error('Error saving income:', error);
@@ -196,6 +200,10 @@ export async function saveTransactionsToSheet(transactions: Transaction[]): Prom
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(transactions),
     });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Error saving transactions:', response.status, errorData);
+    }
     return response.ok;
   } catch (error) {
     console.error('Error saving transactions:', error);

@@ -5,18 +5,18 @@ import { mapDbSavingsGoalToSavingsGoal, mapSavingsGoalToDbSavingsGoal } from '@/
 import { SavingsGoal } from '@/types';
 import { DbSavingsGoal } from '@/types/supabase';
 
-// GET - Read all savings goals for the authenticated user
+// GET - Read all savings goals for the authenticated user's household
 export async function GET() {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !session?.user?.householdId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data, error } = await supabase
       .from('savings_goals')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('household_id', session.user.householdId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -32,22 +32,23 @@ export async function GET() {
   }
 }
 
-// POST - Save all savings goals (replaces entire list for the user)
+// POST - Save all savings goals (replaces entire list for the household)
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !session?.user?.householdId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const savings: SavingsGoal[] = await request.json();
     const userId = session.user.id;
+    const householdId = session.user.householdId;
 
-    // Delete existing savings goals for this user
+    // Delete existing savings goals for this household
     const { error: deleteError } = await supabase
       .from('savings_goals')
       .delete()
-      .eq('user_id', userId);
+      .eq('household_id', householdId);
 
     if (deleteError) {
       console.error('Error deleting existing savings:', deleteError);
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     // Insert new savings goals if there are any
     if (savings.length > 0) {
-      const savingsForDb = savings.map(goal => mapSavingsGoalToDbSavingsGoal(goal, userId));
+      const savingsForDb = savings.map(goal => mapSavingsGoalToDbSavingsGoal(goal, userId, householdId));
 
       const { error: insertError } = await supabase
         .from('savings_goals')

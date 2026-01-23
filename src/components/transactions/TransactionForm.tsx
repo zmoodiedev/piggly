@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Transaction, TransactionCategory, Currency } from '@/types';
+import { Transaction, ExpenseCategory, Currency } from '@/types';
 import { generateId } from '@/lib/storage';
+import { expenseCategories, expenseCategoryLabels } from '@/lib/categories';
 import '@/components/debts/Debts.css';
 
 interface TransactionFormProps {
@@ -11,25 +12,10 @@ interface TransactionFormProps {
   onClose: () => void;
 }
 
-const categories: { value: TransactionCategory; label: string }[] = [
-  { value: 'groceries', label: 'Groceries' },
-  { value: 'eating-out', label: 'Eating Out' },
-  { value: 'entertainment', label: 'Entertainment' },
-  { value: 'clothing', label: 'Clothing' },
-  { value: 'transportation', label: 'Transportation' },
-  { value: 'healthcare', label: 'Healthcare' },
-  { value: 'personal-care', label: 'Personal Care' },
-  { value: 'gifts', label: 'Gifts' },
-  { value: 'education', label: 'Education' },
-  { value: 'travel', label: 'Travel' },
-  { value: 'shopping', label: 'Shopping' },
-  { value: 'other', label: 'Other' },
-];
-
 export default function TransactionForm({ transaction, onSave, onClose }: TransactionFormProps) {
   const [formData, setFormData] = useState({
     amount: '',
-    category: 'groceries' as TransactionCategory,
+    category: 'groceries' as ExpenseCategory,
     description: '',
     date: new Date().toISOString().split('T')[0],
     currency: 'CAD' as Currency,
@@ -143,8 +129,8 @@ export default function TransactionForm({ transaction, onSave, onClose }: Transa
                 value={formData.category}
                 onChange={handleChange}
               >
-                {categories.map(cat => (
-                  <option key={cat.value} value={cat.value}>{cat.label}</option>
+                {expenseCategories.map(cat => (
+                  <option key={cat} value={cat}>{expenseCategoryLabels[cat]}</option>
                 ))}
               </select>
             </div>

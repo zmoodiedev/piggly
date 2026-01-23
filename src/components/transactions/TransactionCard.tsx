@@ -1,8 +1,9 @@
 'use client';
 
-import { Transaction, TransactionCategory } from '@/types';
+import { Transaction } from '@/types';
 import { useCurrency } from '@/lib/context/CurrencyContext';
 import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { expenseCategoryIcons, expenseCategoryLabels } from '@/lib/categories';
 import { format } from 'date-fns';
 
 interface TransactionCardProps {
@@ -10,36 +11,6 @@ interface TransactionCardProps {
   onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => void;
 }
-
-const categoryIcons: Record<TransactionCategory, string> = {
-  'groceries': '🛒',
-  'eating-out': '🍽️',
-  'entertainment': '🎬',
-  'clothing': '👕',
-  'transportation': '🚗',
-  'healthcare': '💊',
-  'personal-care': '💅',
-  'gifts': '🎁',
-  'education': '📚',
-  'travel': '✈️',
-  'shopping': '🛍️',
-  'other': '📦',
-};
-
-const categoryLabels: Record<TransactionCategory, string> = {
-  'groceries': 'Groceries',
-  'eating-out': 'Eating Out',
-  'entertainment': 'Entertainment',
-  'clothing': 'Clothing',
-  'transportation': 'Transportation',
-  'healthcare': 'Healthcare',
-  'personal-care': 'Personal Care',
-  'gifts': 'Gifts',
-  'education': 'Education',
-  'travel': 'Travel',
-  'shopping': 'Shopping',
-  'other': 'Other',
-};
 
 export default function TransactionCard({ transaction, onEdit, onDelete }: TransactionCardProps) {
   const { currency } = useCurrency();
@@ -58,13 +29,13 @@ export default function TransactionCard({ transaction, onEdit, onDelete }: Trans
     <div className="transaction-card">
       <div className="transaction-card-left">
         <div className={`transaction-card-icon ${transaction.category}`}>
-          {categoryIcons[transaction.category] || categoryIcons.other}
+          {expenseCategoryIcons[transaction.category] || '📦'}
         </div>
         <div className="transaction-card-info">
           <h3 className="transaction-card-description">{transaction.description}</h3>
           <div className="transaction-card-details">
             <span className="transaction-card-category">
-              {categoryLabels[transaction.category] || transaction.category}
+              {expenseCategoryLabels[transaction.category] || transaction.category}
             </span>
             <span className="transaction-card-date">
               {formatDate(transaction.date)}

@@ -19,6 +19,11 @@
   font-size: 14px;
 }
 
+.transactions-actions {
+  display: flex;
+  gap: 12px;
+}
+
 .transactions-add-btn {
   display: flex;
   align-items: center;
@@ -36,6 +41,26 @@
 .transactions-add-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 123, 156, 0.4);
+}
+
+.transactions-import-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: white;
+  color: #6B7280;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.transactions-import-btn:hover {
+  border-color: #FF7B9C;
+  color: #FF7B9C;
+  background: #FFF5F7;
 }
 
 /* Summary cards */
@@ -286,7 +311,13 @@
     gap: 16px;
   }
 
-  .transactions-add-btn {
+  .transactions-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .transactions-add-btn,
+  .transactions-import-btn {
     width: 100%;
     justify-content: center;
   }

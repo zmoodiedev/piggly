@@ -2,6 +2,7 @@
 
 import { Bill } from '@/types';
 import { formatCurrency } from '@/lib/currency';
+import { expenseCategoryIcons } from '@/lib/categories';
 
 interface BillCardProps {
   bill: Bill;
@@ -9,16 +10,6 @@ interface BillCardProps {
   onDelete: (id: string) => void;
   onTogglePaid: (bill: Bill) => void;
 }
-
-const categoryIcons: Record<string, string> = {
-  utilities: '⚡',
-  subscription: '📺',
-  insurance: '🛡️',
-  housing: '🏠',
-  harrison: '👤',
-  debt: '💳',
-  other: '📄',
-};
 
 export default function BillCard({ bill, onEdit, onDelete, onTogglePaid }: BillCardProps) {
   // Display in native currency without conversion
@@ -53,7 +44,7 @@ export default function BillCard({ bill, onEdit, onDelete, onTogglePaid }: BillC
     <div className={`bill-card ${bill.isPaid ? 'paid' : ''}`}>
       <div className="bill-card-left">
         <div className={`bill-card-icon ${bill.category}`}>
-          {categoryIcons[bill.category] || categoryIcons.other}
+          {expenseCategoryIcons[bill.category] || '📦'}
         </div>
         <div className="bill-card-info">
           <h3 className="bill-card-name">

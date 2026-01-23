@@ -1,3 +1,5 @@
+import { ExpenseCategory, IncomeCategory } from '@/lib/categories';
+
 // Currency types
 export type Currency = 'CAD' | 'USD';
 
@@ -6,6 +8,9 @@ export interface CurrencyConfig {
   symbol: string;
   name: string;
 }
+
+// Re-export category types for convenience
+export type { ExpenseCategory, IncomeCategory } from '@/lib/categories';
 
 // Financial data types
 export interface Debt {
@@ -27,7 +32,7 @@ export interface Bill {
   name: string;
   amount: number;
   dueDate: number; // day of month
-  category: 'utilities' | 'subscription' | 'insurance' | 'housing' | 'harrison' | 'debt' | 'other';
+  category: ExpenseCategory;
   isRecurring: boolean;
   frequency: 'monthly' | 'quarterly' | 'annually';
   isPaid: boolean;
@@ -54,6 +59,7 @@ export interface Income {
   id: string;
   amount: number;
   source: string;
+  category: IncomeCategory;
   date: Date;
   notes?: string;
   currency: Currency;
@@ -61,24 +67,13 @@ export interface Income {
   updatedAt: Date;
 }
 
-export type TransactionCategory =
-  | 'groceries'
-  | 'eating-out'
-  | 'entertainment'
-  | 'clothing'
-  | 'transportation'
-  | 'healthcare'
-  | 'personal-care'
-  | 'gifts'
-  | 'education'
-  | 'travel'
-  | 'shopping'
-  | 'other';
+// Deprecated: Use ExpenseCategory instead
+export type TransactionCategory = ExpenseCategory;
 
 export interface Transaction {
   id: string;
   amount: number;
-  category: TransactionCategory;
+  category: ExpenseCategory;
   description: string;
   date: Date;
   currency: Currency;

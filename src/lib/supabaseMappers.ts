@@ -29,9 +29,10 @@ export function mapDbDebtToDebt(db: DbDebt): Debt {
   };
 }
 
-export function mapDebtToDbDebt(debt: Debt, userId: string): DbDebtInsert {
+export function mapDebtToDbDebt(debt: Debt, userId: string, householdId: string): DbDebtInsert {
   return {
     user_id: userId,
+    household_id: householdId,
     name: debt.name,
     total_amount: debt.totalAmount,
     current_balance: debt.currentBalance,
@@ -62,9 +63,10 @@ export function mapDbBillToBill(db: DbBill): Bill {
   };
 }
 
-export function mapBillToDbBill(bill: Bill, userId: string): DbBillInsert {
+export function mapBillToDbBill(bill: Bill, userId: string, householdId: string): DbBillInsert {
   return {
     user_id: userId,
+    household_id: householdId,
     name: bill.name,
     amount: bill.amount,
     due_date: bill.dueDate,
@@ -97,9 +99,10 @@ export function mapDbSavingsGoalToSavingsGoal(db: DbSavingsGoal): SavingsGoal {
   };
 }
 
-export function mapSavingsGoalToDbSavingsGoal(goal: SavingsGoal, userId: string): DbSavingsGoalInsert {
+export function mapSavingsGoalToDbSavingsGoal(goal: SavingsGoal, userId: string, householdId: string): DbSavingsGoalInsert {
   return {
     user_id: userId,
+    household_id: householdId,
     name: goal.name,
     target_amount: goal.targetAmount,
     current_amount: goal.currentAmount,
@@ -119,6 +122,7 @@ export function mapDbIncomeToIncome(db: DbIncome): Income {
     id: db.id,
     amount: db.amount,
     source: db.source,
+    category: db.category || 'other',
     date: new Date(db.date),
     notes: db.notes ?? undefined,
     currency: db.currency,
@@ -127,11 +131,13 @@ export function mapDbIncomeToIncome(db: DbIncome): Income {
   };
 }
 
-export function mapIncomeToDbIncome(income: Income, userId: string): DbIncomeInsert {
+export function mapIncomeToDbIncome(income: Income, userId: string, householdId: string): DbIncomeInsert {
   return {
     user_id: userId,
+    household_id: householdId,
     amount: income.amount,
     source: income.source,
+    category: income.category || 'other',
     date: income.date instanceof Date ? income.date.toISOString() : income.date,
     notes: income.notes ?? null,
     currency: income.currency,
@@ -152,9 +158,10 @@ export function mapDbTransactionToTransaction(db: DbTransaction): Transaction {
   };
 }
 
-export function mapTransactionToDbTransaction(transaction: Transaction, userId: string): DbTransactionInsert {
+export function mapTransactionToDbTransaction(transaction: Transaction, userId: string, householdId: string): DbTransactionInsert {
   return {
     user_id: userId,
+    household_id: householdId,
     amount: transaction.amount,
     category: transaction.category,
     description: transaction.description,

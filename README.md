@@ -4,6 +4,6 @@ A personal finance dashboard built with Next.js for tracking income, expenses, b
 
 ## Tech Stack
 
-- Next.js 15 (App Router)
+- Next.js 16 (App Router)
 - NextAuth.js (Google OAuth)
-- Google Sheets API (data storage)
+- Supabase (PostgreSQL database)

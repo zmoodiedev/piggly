@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bill, Currency } from '@/types';
+import { Bill, Currency, ExpenseCategory } from '@/types';
 import { generateId } from '@/lib/storage';
+import { expenseCategories, expenseCategoryLabels } from '@/lib/categories';
 import '@/components/debts/Debts.css'; // Reuse modal/form styles
 
 interface BillFormProps {
@@ -16,7 +17,7 @@ export default function BillForm({ bill, onSave, onClose }: BillFormProps) {
     name: '',
     amount: '',
     dueDate: '',
-    category: 'utilities' as Bill['category'],
+    category: 'utilities' as ExpenseCategory,
     isRecurring: true,
     frequency: 'monthly' as Bill['frequency'],
     currency: 'CAD' as Currency,
@@ -155,13 +156,9 @@ export default function BillForm({ bill, onSave, onClose }: BillFormProps) {
               value={formData.category}
               onChange={handleChange}
             >
-              <option value="utilities">Utilities</option>
-              <option value="subscription">Subscription</option>
-              <option value="insurance">Insurance</option>
-              <option value="housing">Housing</option>
-              <option value="harrison">Harrison</option>
-              <option value="debt">Debt</option>
-              <option value="other">Other</option>
+              {expenseCategories.map(cat => (
+                <option key={cat} value={cat}>{expenseCategoryLabels[cat]}</option>
+              ))}
             </select>
           </div>
 

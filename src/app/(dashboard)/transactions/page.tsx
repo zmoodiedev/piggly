@@ -1,46 +1,39 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Transaction, TransactionCategory } from '@/types';
-import { fetchTransactions, saveTransactionsToSheet } from '@/lib/storage';
+import { Transaction, ExpenseCategory, Income } from '@/types';
+import { fetchTransactions, saveTransactionsToSheet, fetchIncome, saveIncomeToSheet } from '@/lib/storage';
 import { useCurrency } from '@/lib/context/CurrencyContext';
 import { useMonth } from '@/lib/context/MonthContext';
 import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { expenseCategoryLabels } from '@/lib/categories';
 import { TransactionCard, TransactionForm } from '@/components/transactions';
+import { ImportModal } from '@/components/import';
 import { isWithinInterval } from 'date-fns';
 import '@/components/transactions/Transactions.css';
-
-const categoryLabels: Record<TransactionCategory, string> = {
-  'groceries': 'Groceries',
-  'eating-out': 'Eating Out',
-  'entertainment': 'Entertainment',
-  'clothing': 'Clothing',
-  'transportation': 'Transportation',
-  'healthcare': 'Healthcare',
-  'personal-care': 'Personal Care',
-  'gifts': 'Gifts',
-  'education': 'Education',
-  'travel': 'Travel',
-  'shopping': 'Shopping',
-  'other': 'Other',
-};
 
 export default function TransactionsPage() {
   const { currency } = useCurrency();
   const { monthStart, monthEnd, monthLabel } = useMonth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [income, setIncome] = useState<Income[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [filterCategory, setFilterCategory] = useState<TransactionCategory | 'all'>('all');
+  const [filterCategory, setFilterCategory] = useState<ExpenseCategory | 'all'>('all');
 
   useEffect(() => {
-    const loadTransactions = async () => {
-      const storedTransactions = await fetchTransactions();
+    const loadData = async () => {
+      const [storedTransactions, storedIncome] = await Promise.all([
+        fetchTransactions(),
+        fetchIncome(),
+      ]);
       setTransactions(storedTransactions);
+      setIncome(storedIncome);
       setIsLoading(false);
     };
-    loadTransactions();
+    loadData();
   }, []);
 
   const formatAmount = (amount: number, itemCurrency: string = 'CAD') => {
@@ -78,6 +71,28 @@ export default function TransactionsPage() {
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingTransaction(null);
+  };
+
+  const handleImport = async (newTransactions: Transaction[], newIncome: Income[]) => {
+    // Merge with existing data
+    const updatedTransactions = [...transactions, ...newTransactions];
+    const updatedIncome = [...income, ...newIncome];
+
+    // Save both in parallel
+    const [transactionsSaved, incomeSaved] = await Promise.all([
+      saveTransactionsToSheet(updatedTransactions),
+      saveIncomeToSheet(updatedIncome),
+    ]);
+
+    if (!transactionsSaved || !incomeSaved) {
+      console.error('Import save failed:', { transactionsSaved, incomeSaved });
+      throw new Error(
+        `Failed to save: ${!transactionsSaved ? 'transactions' : ''}${!transactionsSaved && !incomeSaved ? ' and ' : ''}${!incomeSaved ? 'income' : ''}`
+      );
+    }
+
+    setTransactions(updatedTransactions);
+    setIncome(updatedIncome);
   };
 
   // Filter transactions for selected month
@@ -131,13 +146,23 @@ export default function TransactionsPage() {
           <h1 className="transactions-title">Transactions</h1>
           <p className="transactions-subtitle">Track your spending by category</p>
         </div>
-        <button className="transactions-add-btn" onClick={() => setShowForm(true)}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Add Transaction
-        </button>
+        <div className="transactions-actions">
+          <button className="transactions-import-btn" onClick={() => setShowImportModal(true)}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Import CSV
+          </button>
+          <button className="transactions-add-btn" onClick={() => setShowForm(true)}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Transaction
+          </button>
+        </div>
       </div>
 
       {/* Summary cards */}
@@ -175,7 +200,7 @@ export default function TransactionsPage() {
               className={`transactions-filter-btn ${filterCategory === cat ? 'active' : ''}`}
               onClick={() => setFilterCategory(cat)}
             >
-              {categoryLabels[cat] || cat}
+              {expenseCategoryLabels[cat] || cat}
             </button>
           ))}
         </div>
@@ -212,6 +237,16 @@ export default function TransactionsPage() {
           transaction={editingTransaction}
           onSave={handleSaveTransaction}
           onClose={handleCloseForm}
+        />
+      )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <ImportModal
+          existingTransactions={transactions}
+          existingIncome={income}
+          onImport={handleImport}
+          onClose={() => setShowImportModal(false)}
         />
       )}
     </div>

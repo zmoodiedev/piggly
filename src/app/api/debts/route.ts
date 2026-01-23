@@ -5,18 +5,18 @@ import { mapDbDebtToDebt, mapDebtToDbDebt } from '@/lib/supabaseMappers';
 import { Debt } from '@/types';
 import { DbDebt } from '@/types/supabase';
 
-// GET - Read all debts for the authenticated user
+// GET - Read all debts for the authenticated user's household
 export async function GET() {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !session?.user?.householdId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data, error } = await supabase
       .from('debts')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('household_id', session.user.householdId)
       .order('due_date', { ascending: true });
 
     if (error) {
@@ -32,22 +32,23 @@ export async function GET() {
   }
 }
 
-// POST - Save all debts (replaces entire list for the user)
+// POST - Save all debts (replaces entire list for the household)
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !session?.user?.householdId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const debts: Debt[] = await request.json();
     const userId = session.user.id;
+    const householdId = session.user.householdId;
 
-    // Delete existing debts for this user
+    // Delete existing debts for this household
     const { error: deleteError } = await supabase
       .from('debts')
       .delete()
-      .eq('user_id', userId);
+      .eq('household_id', householdId);
 
     if (deleteError) {
       console.error('Error deleting existing debts:', deleteError);
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     // Insert new debts if there are any
     if (debts.length > 0) {
-      const debtsForDb = debts.map(debt => mapDebtToDbDebt(debt, userId));
+      const debtsForDb = debts.map(debt => mapDebtToDbDebt(debt, userId, householdId));
 
       const { error: insertError } = await supabase
         .from('debts')

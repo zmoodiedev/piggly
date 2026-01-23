@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Income, Currency } from '@/types';
+import { Income, Currency, IncomeCategory } from '@/types';
 import { generateId } from '@/lib/storage';
+import { incomeCategories, incomeCategoryLabels } from '@/lib/categories';
 import '@/components/debts/Debts.css';
 
 interface IncomeFormProps {
@@ -15,6 +16,7 @@ export default function IncomeForm({ income, onSave, onClose }: IncomeFormProps)
   const [formData, setFormData] = useState({
     amount: '',
     source: '',
+    category: 'salary' as IncomeCategory,
     date: new Date().toISOString().split('T')[0],
     notes: '',
     currency: 'CAD' as Currency,
@@ -29,6 +31,7 @@ export default function IncomeForm({ income, onSave, onClose }: IncomeFormProps)
       setFormData({
         amount: income.amount.toString(),
         source: income.source,
+        category: income.category || 'other',
         date: incomeDate.toISOString().split('T')[0],
         notes: income.notes || '',
         currency: income.currency || 'CAD',
@@ -44,6 +47,7 @@ export default function IncomeForm({ income, onSave, onClose }: IncomeFormProps)
       id: income?.id || generateId(),
       amount: parseFloat(formData.amount) || 0,
       source: formData.source,
+      category: formData.category,
       date: new Date(formData.date),
       notes: formData.notes || undefined,
       currency: formData.currency,
@@ -73,18 +77,34 @@ export default function IncomeForm({ income, onSave, onClose }: IncomeFormProps)
         </div>
 
         <form className="modal-body" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="source">Source</label>
-            <input
-              type="text"
-              id="source"
-              name="source"
-              className="form-input"
-              placeholder="e.g., Main Job, Freelance, Bonus"
-              value={formData.source}
-              onChange={handleChange}
-              required
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label" htmlFor="source">Source</label>
+              <input
+                type="text"
+                id="source"
+                name="source"
+                className="form-input"
+                placeholder="e.g., Main Job, Freelance, Bonus"
+                value={formData.source}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="category">Category</label>
+              <select
+                id="category"
+                name="category"
+                className="form-select"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                {incomeCategories.map(cat => (
+                  <option key={cat} value={cat}>{incomeCategoryLabels[cat]}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="form-row">
