@@ -1,7 +1,7 @@
-import type { MetadataRoute } from 'next'
+import { NextResponse } from 'next/server';
 
-export default function manifest(): MetadataRoute.Manifest {
-  return {
+export async function GET() {
+  const manifest = {
     name: 'inDebt - Personal Budgeting App',
     short_name: 'inDebt',
     description: 'Personal budgeting app for managing debts, bills, and savings goals',
@@ -24,5 +24,11 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: 'any',
       },
     ],
-  }
+  };
+
+  return NextResponse.json(manifest, {
+    headers: {
+      'Content-Type': 'application/manifest+json',
+    },
+  });
 }

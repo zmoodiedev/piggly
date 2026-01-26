@@ -57,10 +57,15 @@ export default function BillsPage() {
       updatedBills = [...bills, bill];
     }
 
-    setBills(updatedBills);
-    await saveBillsToSheet(updatedBills);
-    setShowForm(false);
-    setEditingBill(null);
+    // Save to server first, only update UI if successful
+    const success = await saveBillsToSheet(updatedBills);
+    if (success) {
+      setBills(updatedBills);
+      setShowForm(false);
+      setEditingBill(null);
+    } else {
+      alert('Failed to save bill. Please try again.');
+    }
   };
 
   const handleEditBill = (bill: Bill) => {
@@ -71,8 +76,12 @@ export default function BillsPage() {
   const handleDeleteBill = async (id: string) => {
     if (confirm('Are you sure you want to delete this bill?')) {
       const updatedBills = bills.filter(b => b.id !== id);
-      setBills(updatedBills);
-      await saveBillsToSheet(updatedBills);
+      const success = await saveBillsToSheet(updatedBills);
+      if (success) {
+        setBills(updatedBills);
+      } else {
+        alert('Failed to delete bill. Please try again.');
+      }
     }
   };
 
@@ -84,8 +93,11 @@ export default function BillsPage() {
       updatedAt: new Date(),
     };
     const updatedBills = bills.map(b => b.id === bill.id ? updatedBill : b);
-    setBills(updatedBills);
-    await saveBillsToSheet(updatedBills);
+    const success = await saveBillsToSheet(updatedBills);
+    if (success) {
+      setBills(updatedBills);
+    }
+    // Silent fail for toggle - less critical
   };
 
   const handleCloseForm = () => {

@@ -43,6 +43,7 @@ export default function SpendingChart({ data }: SpendingChartProps) {
         padding: '24px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         border: '1px solid #F3F4F6',
+        minWidth: 0,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
@@ -60,8 +61,8 @@ export default function SpendingChart({ data }: SpendingChartProps) {
           </div>
         </div>
       </div>
-      <div style={{ height: '256px' }}>
-        <ResponsiveContainer width="100%" height="100%">
+      <div style={{ height: '256px', minWidth: 0 }}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <LineChart
             data={convertedData}
             margin={{ top: 5, right: 20, left: 0, bottom: 5 }}

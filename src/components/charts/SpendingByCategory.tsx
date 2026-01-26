@@ -59,13 +59,14 @@ export default function SpendingByCategory({ data, title = 'Spending by Category
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         border: '1px solid #F3F4F6',
         height: '100%',
+        minWidth: 0,
       }}
     >
       <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#1A1D2E', margin: '0 0 16px 0' }}>
         {title}
       </h3>
-      <div style={{ height: '192px' }}>
-        <ResponsiveContainer width="100%" height="100%">
+      <div style={{ height: '192px', minWidth: 0 }}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <PieChart>
             <Pie
               data={data}

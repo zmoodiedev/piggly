@@ -1,4 +1,4 @@
-const CACHE_NAME = 'indebt-v1';
+const CACHE_NAME = 'indebt-v2';
 const STATIC_ASSETS = [
   '/',
   '/offline',
@@ -36,8 +36,8 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Skip authentication and API routes - always go to network
-  if (url.pathname.startsWith('/api/')) {
+  // Skip authentication, API routes, and manifest - always go to network
+  if (url.pathname.startsWith('/api/') || url.pathname.includes('manifest')) {
     return;
   }
 

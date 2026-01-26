@@ -24,6 +24,37 @@ export default function BudgetBreakdown({ data }: BudgetBreakdownProps) {
 
   const total = convertedData.reduce((sum, item) => sum + item.value, 0);
 
+  // Handle empty data case
+  if (data.length === 0) {
+    return (
+      <div
+        style={{
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          padding: '24px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          border: '1px solid #F3F4F6',
+          height: '100%',
+          minWidth: 0,
+        }}
+      >
+        <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#1A1D2E', margin: '0 0 16px 0' }}>
+          Budget Breakdown
+        </h3>
+        <div style={{
+          height: '192px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#9CA3AF',
+          fontSize: '14px'
+        }}>
+          No bills yet
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -33,13 +64,14 @@ export default function BudgetBreakdown({ data }: BudgetBreakdownProps) {
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         border: '1px solid #F3F4F6',
         height: '100%',
+        minWidth: 0,
       }}
     >
       <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#1A1D2E', margin: '0 0 16px 0' }}>
         Budget Breakdown
       </h3>
-      <div style={{ height: '192px' }}>
-        <ResponsiveContainer width="100%" height="100%">
+      <div style={{ height: '192px', minWidth: 0 }}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <PieChart>
             <Pie
               data={convertedData}
@@ -73,8 +105,8 @@ export default function BudgetBreakdown({ data }: BudgetBreakdownProps) {
         </p>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-        {convertedData.map((item, index) => (
-          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {convertedData.slice(0, 6).map((item, index) => (
+          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
             <div
               style={{
                 width: '10px',
