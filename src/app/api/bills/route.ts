@@ -32,7 +32,7 @@ export async function GET() {
   }
 }
 
-// POST - Save all bills (replaces entire list for the household)
+// POST - Create a single new bill
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
@@ -40,38 +40,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const bills: Bill[] = await request.json();
+    const bill: Bill = await request.json();
     const userId = session.user.id;
     const householdId = session.user.householdId;
 
-    // Delete existing bills for this household
-    const { error: deleteError } = await supabase
+    const billForDb = mapBillToDbBill(bill, userId, householdId);
+
+    const { data, error } = await supabase
       .from('bills')
-      .delete()
-      .eq('household_id', householdId);
+      .insert(billForDb)
+      .select()
+      .single();
 
-    if (deleteError) {
-      console.error('Error deleting existing bills:', deleteError);
-      return NextResponse.json({ error: 'Failed to save bills' }, { status: 500 });
+    if (error) {
+      console.error('Error creating bill:', error);
+      return NextResponse.json({ error: 'Failed to create bill' }, { status: 500 });
     }
 
-    // Insert new bills if there are any
-    if (bills.length > 0) {
-      const billsForDb = bills.map(bill => mapBillToDbBill(bill, userId, householdId));
-
-      const { error: insertError } = await supabase
-        .from('bills')
-        .insert(billsForDb);
-
-      if (insertError) {
-        console.error('Error inserting bills:', insertError);
-        return NextResponse.json({ error: 'Failed to save bills' }, { status: 500 });
-      }
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json(mapDbBillToBill(data as DbBill));
   } catch (error) {
-    console.error('Error saving bills:', error);
-    return NextResponse.json({ error: 'Failed to save bills' }, { status: 500 });
+    console.error('Error creating bill:', error);
+    return NextResponse.json({ error: 'Failed to create bill' }, { status: 500 });
   }
 }

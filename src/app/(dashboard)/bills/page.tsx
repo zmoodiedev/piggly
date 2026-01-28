@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Bill } from '@/types';
-import { fetchBills, saveBillsToSheet } from '@/lib/storage';
+import { fetchBills, createBill, updateBill, deleteBill } from '@/lib/storage';
 import { formatCurrency } from '@/lib/currency';
 import { BillCard, BillForm } from '@/components/bills';
 import '@/components/bills/Bills.css';
@@ -20,27 +20,25 @@ export default function BillsPage() {
       // Process auto-pay bills: mark as paid if due date has passed
       const today = new Date();
       const currentDay = today.getDate();
-      let needsUpdate = false;
 
+      const autoPayUpdates: Promise<boolean>[] = [];
       const processedBills = storedBills.map(bill => {
-        // Check if bill has auto-pay enabled, is not already paid, and due date has passed
         if (bill.isAutoPay && !bill.isPaid && currentDay > bill.dueDate) {
-          needsUpdate = true;
-          return {
-            ...bill,
+          const updates = {
             isPaid: true,
             lastPaidDate: new Date(),
             updatedAt: new Date(),
           };
+          autoPayUpdates.push(updateBill(bill.id, updates));
+          return { ...bill, ...updates };
         }
         return bill;
       });
 
       setBills(processedBills);
 
-      // Save updated bills if any were auto-paid
-      if (needsUpdate) {
-        await saveBillsToSheet(processedBills);
+      if (autoPayUpdates.length > 0) {
+        await Promise.all(autoPayUpdates);
       }
 
       setIsLoading(false);
@@ -49,22 +47,24 @@ export default function BillsPage() {
   }, []);
 
   const handleSaveBill = async (bill: Bill) => {
-    let updatedBills: Bill[];
-
     if (editingBill) {
-      updatedBills = bills.map(b => b.id === bill.id ? bill : b);
+      const success = await updateBill(bill.id, bill);
+      if (success) {
+        setBills(bills.map(b => b.id === bill.id ? bill : b));
+        setShowForm(false);
+        setEditingBill(null);
+      } else {
+        alert('Failed to save bill. Please try again.');
+      }
     } else {
-      updatedBills = [...bills, bill];
-    }
-
-    // Save to server first, only update UI if successful
-    const success = await saveBillsToSheet(updatedBills);
-    if (success) {
-      setBills(updatedBills);
-      setShowForm(false);
-      setEditingBill(null);
-    } else {
-      alert('Failed to save bill. Please try again.');
+      const created = await createBill(bill);
+      if (created) {
+        setBills([...bills, created]);
+        setShowForm(false);
+        setEditingBill(null);
+      } else {
+        alert('Failed to save bill. Please try again.');
+      }
     }
   };
 
@@ -75,10 +75,9 @@ export default function BillsPage() {
 
   const handleDeleteBill = async (id: string) => {
     if (confirm('Are you sure you want to delete this bill?')) {
-      const updatedBills = bills.filter(b => b.id !== id);
-      const success = await saveBillsToSheet(updatedBills);
+      const success = await deleteBill(id);
       if (success) {
-        setBills(updatedBills);
+        setBills(bills.filter(b => b.id !== id));
       } else {
         alert('Failed to delete bill. Please try again.');
       }
@@ -86,16 +85,14 @@ export default function BillsPage() {
   };
 
   const handleTogglePaid = async (bill: Bill) => {
-    const updatedBill = {
-      ...bill,
+    const updates = {
       isPaid: !bill.isPaid,
       lastPaidDate: !bill.isPaid ? new Date() : bill.lastPaidDate,
       updatedAt: new Date(),
     };
-    const updatedBills = bills.map(b => b.id === bill.id ? updatedBill : b);
-    const success = await saveBillsToSheet(updatedBills);
+    const success = await updateBill(bill.id, updates);
     if (success) {
-      setBills(updatedBills);
+      setBills(bills.map(b => b.id === bill.id ? { ...bill, ...updates } : b));
     }
     // Silent fail for toggle - less critical
   };

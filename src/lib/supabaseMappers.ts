@@ -2,6 +2,7 @@ import { Debt, Bill, SavingsGoal, Income, Transaction } from '@/types';
 import {
   DbDebt,
   DbBill,
+  DbBillUpdate,
   DbSavingsGoal,
   DbIncome,
   DbTransaction,
@@ -82,6 +83,27 @@ export function mapBillToDbBill(bill: Bill, userId: string, householdId: string)
       : null,
     currency: bill.currency,
   };
+}
+
+export function mapBillToDbBillUpdate(bill: Partial<Bill>): DbBillUpdate {
+  const update: DbBillUpdate = {};
+  if (bill.name !== undefined) update.name = bill.name;
+  if (bill.amount !== undefined) update.amount = bill.amount;
+  if (bill.dueDate !== undefined) update.due_date = bill.dueDate;
+  if (bill.category !== undefined) update.category = bill.category;
+  if (bill.isRecurring !== undefined) update.is_recurring = bill.isRecurring;
+  if (bill.frequency !== undefined) update.frequency = bill.frequency;
+  if (bill.isPaid !== undefined) update.is_paid = bill.isPaid;
+  if (bill.isAutoPay !== undefined) update.is_auto_pay = bill.isAutoPay;
+  if (bill.lastPaidDate !== undefined) {
+    update.last_paid_date = bill.lastPaidDate
+      ? bill.lastPaidDate instanceof Date
+        ? bill.lastPaidDate.toISOString()
+        : bill.lastPaidDate
+      : null;
+  }
+  if (bill.currency !== undefined) update.currency = bill.currency;
+  return update;
 }
 
 // Savings Goal mappers

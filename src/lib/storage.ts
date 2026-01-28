@@ -87,7 +87,7 @@ export async function saveDebtsToExcel(debts: Debt[]): Promise<boolean> {
 export const getBills = (): Bill[] => getFromStorage(STORAGE_KEYS.BILLS, []);
 export const saveBills = (bills: Bill[]) => setToStorage(STORAGE_KEYS.BILLS, bills);
 
-// Bills - API/Google Sheets storage
+// Bills - API storage
 export async function fetchBills(): Promise<Bill[]> {
   try {
     const response = await fetch('/api/bills');
@@ -99,16 +99,43 @@ export async function fetchBills(): Promise<Bill[]> {
   }
 }
 
-export async function saveBillsToSheet(bills: Bill[]): Promise<boolean> {
+export async function createBill(bill: Bill): Promise<Bill | null> {
   try {
     const response = await fetch('/api/bills', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bills),
+      body: JSON.stringify(bill),
+    });
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating bill:', error);
+    return null;
+  }
+}
+
+export async function updateBill(id: string, bill: Partial<Bill>): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/bills/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bill),
     });
     return response.ok;
   } catch (error) {
-    console.error('Error saving bills:', error);
+    console.error('Error updating bill:', error);
+    return false;
+  }
+}
+
+export async function deleteBill(id: string): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/bills/${id}`, {
+      method: 'DELETE',
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error deleting bill:', error);
     return false;
   }
 }
