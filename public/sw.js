@@ -1,4 +1,4 @@
-const CACHE_NAME = 'indebt-v2';
+const CACHE_NAME = 'piggly-v1';
 const STATIC_ASSETS = [
   '/',
   '/offline',

@@ -1,8 +1,7 @@
 'use client';
 
 import { SavingsGoal } from '@/types';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { calculatePercentage } from '@/lib/utils';
 
 interface SavingsCardProps {
@@ -13,10 +12,8 @@ interface SavingsCardProps {
 }
 
 export default function SavingsCard({ goal, onEdit, onDelete, onAddMoney }: SavingsCardProps) {
-  const { currency } = useCurrency();
-
   const formatAmount = (amount: number) => {
-    return formatCurrency(convertCurrency(amount, 'CAD', currency), currency);
+    return formatCurrency(amount);
   };
 
   const progress = calculatePercentage(goal.currentAmount, goal.targetAmount);

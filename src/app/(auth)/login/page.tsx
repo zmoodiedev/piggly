@@ -99,7 +99,7 @@ function LoginContent() {
           margin: '0 0 8px 0',
           letterSpacing: '-0.5px',
         }}>
-          inDebt
+          Piggly
         </h1>
 
         <p style={{

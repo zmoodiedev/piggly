@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { SavingsGoal } from '@/types';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import '@/components/debts/Debts.css';
 
 interface AddMoneyModalProps {
@@ -13,11 +12,10 @@ interface AddMoneyModalProps {
 }
 
 export default function AddMoneyModal({ goal, onSave, onClose }: AddMoneyModalProps) {
-  const { currency } = useCurrency();
   const [amount, setAmount] = useState('');
 
   const formatAmount = (amt: number) => {
-    return formatCurrency(convertCurrency(amt, 'CAD', currency), currency);
+    return formatCurrency(amt);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -76,7 +74,7 @@ export default function AddMoneyModal({ goal, onSave, onClose }: AddMoneyModalPr
             />
             {remaining > 0 && (
               <p style={{ margin: '8px 0 0', fontSize: '14px', color: '#6B7280' }}>
-                {formatAmount(remaining)} remaining to reach goal
+                {formatCurrency(remaining)} remaining to reach goal
               </p>
             )}
           </div>

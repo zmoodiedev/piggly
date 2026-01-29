@@ -3,13 +3,11 @@
 import { useState, useEffect } from 'react';
 import { SavingsGoal } from '@/types';
 import { fetchSavings, saveSavingsToSheet } from '@/lib/storage';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { SavingsCard, SavingsForm, AddMoneyModal } from '@/components/savings';
 import '@/components/savings/Savings.css';
 
 export default function SavingsPage() {
-  const { currency } = useCurrency();
   const [goals, setGoals] = useState<SavingsGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -26,7 +24,7 @@ export default function SavingsPage() {
   }, []);
 
   const formatAmount = (amount: number) => {
-    return formatCurrency(convertCurrency(amount, 'CAD', currency), currency);
+    return formatCurrency(amount);
   };
 
   const handleSaveGoal = async (goal: SavingsGoal) => {

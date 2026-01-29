@@ -3,14 +3,12 @@
 import { ReactNode, useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { useCurrency } from '@/lib/context/CurrencyContext';
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { currency, setCurrency } = useCurrency();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
 
@@ -73,7 +71,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         }}
       >
         {/* Header */}
-        <Header currency={currency} onCurrencyChange={setCurrency} />
+        <Header />
 
         {/* Page content */}
         <main style={{ flex: 1, padding: '24px' }}>

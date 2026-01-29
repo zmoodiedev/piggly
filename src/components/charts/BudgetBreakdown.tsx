@@ -1,13 +1,13 @@
 'use client';
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 
 interface BudgetItem {
   name: string;
   value: number;
   color: string;
+  [key: string]: string | number;
 }
 
 interface BudgetBreakdownProps {
@@ -15,14 +15,7 @@ interface BudgetBreakdownProps {
 }
 
 export default function BudgetBreakdown({ data }: BudgetBreakdownProps) {
-  const { currency } = useCurrency();
-
-  const convertedData = data.map((item) => ({
-    ...item,
-    value: convertCurrency(item.value, 'CAD', currency),
-  }));
-
-  const total = convertedData.reduce((sum, item) => sum + item.value, 0);
+  const total = data.reduce((sum, item) => sum + item.value, 0);
 
   // Handle empty data case
   if (data.length === 0) {
@@ -74,7 +67,7 @@ export default function BudgetBreakdown({ data }: BudgetBreakdownProps) {
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <PieChart>
             <Pie
-              data={convertedData}
+              data={data}
               cx="50%"
               cy="50%"
               innerRadius={55}
@@ -82,12 +75,12 @@ export default function BudgetBreakdown({ data }: BudgetBreakdownProps) {
               paddingAngle={2}
               dataKey="value"
             >
-              {convertedData.map((entry, index) => (
+              {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
             <Tooltip
-              formatter={(value) => formatCurrency(Number(value), currency)}
+              formatter={(value) => formatCurrency(Number(value))}
               contentStyle={{
                 backgroundColor: '#fff',
                 border: '1px solid #E5E7EB',
@@ -101,11 +94,11 @@ export default function BudgetBreakdown({ data }: BudgetBreakdownProps) {
       <div style={{ textAlign: 'center', marginBottom: '16px' }}>
         <p style={{ fontSize: '14px', color: '#9CA3AF', margin: 0 }}>Total Monthly</p>
         <p style={{ fontSize: '20px', fontWeight: 700, color: '#1A1D2E', margin: 0 }}>
-          {formatCurrency(total, currency)}
+          {formatCurrency(total)}
         </p>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-        {convertedData.slice(0, 6).map((item, index) => (
+        {data.slice(0, 6).map((item, index) => (
           <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
             <div
               style={{

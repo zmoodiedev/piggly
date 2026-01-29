@@ -136,7 +136,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               </svg>
             </div>
             <span className={`sidebar-logo-text ${isExpanded ? 'expanded' : 'collapsed'}`}>
-              inDebt
+              Piggly
             </span>
           </div>
         </div>

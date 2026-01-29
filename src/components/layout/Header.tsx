@@ -2,17 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { Currency } from '@/types';
 import { MonthSelector } from '@/components/ui';
 import { isDemoMode, setDemoMode } from '@/lib/demo/demoState';
 import { resetDemoStore } from '@/lib/demo/demoStore';
 
-interface HeaderProps {
-  currency: Currency;
-  onCurrencyChange: (currency: Currency) => void;
-}
-
-export default function Header({ currency, onCurrencyChange }: HeaderProps) {
+export default function Header() {
   const { data: session } = useSession();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -56,54 +50,6 @@ export default function Header({ currency, onCurrencyChange }: HeaderProps) {
 
       {/* Right side actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px', flexShrink: 0 }}>
-        {/* Currency toggle */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: '#F8F9FC',
-            borderRadius: '12px',
-            padding: '4px',
-            border: '1px solid #E5E7EB',
-            flexShrink: 0,
-          }}
-        >
-          <button
-            onClick={() => onCurrencyChange('CAD')}
-            style={{
-              padding: isMobile ? '6px 8px' : '6px 12px',
-              fontSize: isMobile ? '12px' : '14px',
-              fontWeight: 500,
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              background: currency === 'CAD' ? '#FFFFFF' : 'transparent',
-              color: currency === 'CAD' ? '#1A1D2E' : '#9CA3AF',
-              boxShadow: currency === 'CAD' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
-            }}
-          >
-            CAD
-          </button>
-          <button
-            onClick={() => onCurrencyChange('USD')}
-            style={{
-              padding: isMobile ? '6px 8px' : '6px 12px',
-              fontSize: isMobile ? '12px' : '14px',
-              fontWeight: 500,
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              background: currency === 'USD' ? '#FFFFFF' : 'transparent',
-              color: currency === 'USD' ? '#1A1D2E' : '#9CA3AF',
-              boxShadow: currency === 'USD' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
-            }}
-          >
-            USD
-          </button>
-        </div>
-
         {/* Demo badge */}
         {demo && (
           <div style={{

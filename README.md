@@ -1,4 +1,4 @@
-# Finance Dashboard
+# Piggly
 
 A personal finance dashboard built with Next.js for tracking income, expenses, bills, debts, and savings goals.
 

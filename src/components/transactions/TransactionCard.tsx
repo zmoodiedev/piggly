@@ -1,8 +1,7 @@
 'use client';
 
 import { Transaction } from '@/types';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { expenseCategoryIcons, expenseCategoryLabels } from '@/lib/categories';
 import { format } from 'date-fns';
 
@@ -13,11 +12,8 @@ interface TransactionCardProps {
 }
 
 export default function TransactionCard({ transaction, onEdit, onDelete }: TransactionCardProps) {
-  const { currency } = useCurrency();
-
   const formatAmount = (amount: number) => {
-    const sourceCurrency = transaction.currency || 'CAD';
-    return formatCurrency(convertCurrency(amount, sourceCurrency, currency), currency);
+    return formatCurrency(amount, transaction.currency || 'CAD');
   };
 
   const formatDate = (date: Date | string) => {

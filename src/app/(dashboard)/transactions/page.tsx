@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Transaction, ExpenseCategory, Income } from '@/types';
 import { fetchTransactions, saveTransactionsToSheet, fetchIncome, saveIncomeToSheet } from '@/lib/storage';
-import { useCurrency } from '@/lib/context/CurrencyContext';
 import { useMonth } from '@/lib/context/MonthContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { expenseCategoryLabels } from '@/lib/categories';
 import { TransactionCard, TransactionForm } from '@/components/transactions';
 import { ImportModal } from '@/components/import';
@@ -13,7 +12,6 @@ import { isWithinInterval } from 'date-fns';
 import '@/components/transactions/Transactions.css';
 
 export default function TransactionsPage() {
-  const { currency } = useCurrency();
   const { monthStart, monthEnd, monthLabel } = useMonth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [income, setIncome] = useState<Income[]>([]);
@@ -37,7 +35,7 @@ export default function TransactionsPage() {
   }, []);
 
   const formatAmount = (amount: number, itemCurrency: string = 'CAD') => {
-    return formatCurrency(convertCurrency(amount, itemCurrency as 'CAD' | 'USD', currency), currency);
+    return formatCurrency(amount, itemCurrency as 'CAD' | 'USD');
   };
 
   const handleSaveTransaction = async (entry: Transaction) => {
@@ -102,10 +100,7 @@ export default function TransactionsPage() {
   });
 
   // Calculate metrics for selected month
-  const thisMonthTotal = selectedMonthTransactions.reduce((sum, t) => {
-    const converted = convertCurrency(t.amount, t.currency || 'CAD', currency);
-    return sum + converted;
-  }, 0);
+  const thisMonthTotal = selectedMonthTransactions.reduce((sum, t) => sum + t.amount, 0);
 
   const avgPerTransaction = selectedMonthTransactions.length > 0 ? thisMonthTotal / selectedMonthTransactions.length : 0;
 
@@ -169,7 +164,7 @@ export default function TransactionsPage() {
       <div className="transactions-summary">
         <div className="transactions-summary-card gradient">
           <p className="transactions-summary-label">{monthLabel}</p>
-          <p className="transactions-summary-value">{formatCurrency(thisMonthTotal, currency)}</p>
+          <p className="transactions-summary-value">{formatCurrency(thisMonthTotal)}</p>
         </div>
         <div className="transactions-summary-card">
           <p className="transactions-summary-label">Transactions</p>
@@ -177,7 +172,7 @@ export default function TransactionsPage() {
         </div>
         <div className="transactions-summary-card">
           <p className="transactions-summary-label">Average Per Transaction</p>
-          <p className="transactions-summary-value">{formatCurrency(avgPerTransaction, currency)}</p>
+          <p className="transactions-summary-value">{formatCurrency(avgPerTransaction)}</p>
         </div>
         <div className="transactions-summary-card">
           <p className="transactions-summary-label">All Time Total</p>

@@ -3,15 +3,13 @@
 import { useState, useEffect } from 'react';
 import { Income } from '@/types';
 import { fetchIncome, saveIncomeToSheet } from '@/lib/storage';
-import { useCurrency } from '@/lib/context/CurrencyContext';
 import { useMonth } from '@/lib/context/MonthContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { IncomeCard, IncomeForm } from '@/components/income';
 import { format, isWithinInterval } from 'date-fns';
 import '@/components/income/Income.css';
 
 export default function IncomePage() {
-  const { currency } = useCurrency();
   const { monthStart, monthEnd, monthLabel } = useMonth();
   const [income, setIncome] = useState<Income[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +26,7 @@ export default function IncomePage() {
   }, []);
 
   const formatAmount = (amount: number) => {
-    return formatCurrency(convertCurrency(amount, 'CAD', currency), currency);
+    return formatCurrency(amount);
   };
 
   const handleSaveIncome = async (entry: Income) => {

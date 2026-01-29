@@ -1,8 +1,7 @@
 'use client';
 
 import { Bill } from '@/types';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 
 interface UpcomingBillsProps {
   bills: Bill[];
@@ -25,8 +24,6 @@ const categoryColors: Record<string, { bg: string; text: string }> = {
 };
 
 export default function UpcomingBills({ bills }: UpcomingBillsProps) {
-  const { currency } = useCurrency();
-
   const today = new Date().getDate();
 
   const billsWithDays = bills
@@ -111,7 +108,7 @@ export default function UpcomingBills({ bills }: UpcomingBillsProps) {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <p style={{ fontWeight: 600, color: '#1A1D2E', margin: 0 }}>
-                    {formatCurrency(convertCurrency(bill.amount, 'CAD', currency), currency)}
+                    {formatCurrency(bill.amount)}
                   </p>
                   <p style={{ fontSize: '14px', color: status.color, margin: 0 }}>{status.text}</p>
                 </div>

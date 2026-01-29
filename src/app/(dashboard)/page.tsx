@@ -5,12 +5,10 @@ import { MetricCard } from '@/components/ui';
 import { SpendingChart, BudgetBreakdown, SpendingByCategory } from '@/components/charts';
 import { UpcomingBills, SavingsProgress } from '@/components/dashboard';
 import { useDashboardData } from '@/lib/hooks/useDashboardData';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 
 export default function Home() {
   const { data: session } = useSession();
-  const { currency } = useCurrency();
 
   // Get first name from session
   const firstName = session?.user?.name?.split(' ')[0] || '';
@@ -40,7 +38,7 @@ export default function Home() {
   }
 
   const formatAmount = (amount: number) => {
-    return formatCurrency(convertCurrency(amount, 'CAD', currency), currency);
+    return formatCurrency(amount);
   };
 
   return (

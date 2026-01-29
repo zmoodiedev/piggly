@@ -1,7 +1,6 @@
 'use client';
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { useCurrency } from '@/lib/context/CurrencyContext';
 import { formatCurrency } from '@/lib/currency';
 
 interface SpendingItem {
@@ -17,8 +16,6 @@ interface SpendingByCategoryProps {
 }
 
 export default function SpendingByCategory({ data, title = 'Spending by Category' }: SpendingByCategoryProps) {
-  const { currency } = useCurrency();
-
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
   if (data.length === 0) {
@@ -82,7 +79,7 @@ export default function SpendingByCategory({ data, title = 'Spending by Category
               ))}
             </Pie>
             <Tooltip
-              formatter={(value) => formatCurrency(Number(value), currency)}
+              formatter={(value) => formatCurrency(Number(value))}
               contentStyle={{
                 backgroundColor: '#fff',
                 border: '1px solid #E5E7EB',
@@ -96,7 +93,7 @@ export default function SpendingByCategory({ data, title = 'Spending by Category
       <div style={{ textAlign: 'center', marginBottom: '16px' }}>
         <p style={{ fontSize: '14px', color: '#9CA3AF', margin: 0 }}>Total Spending</p>
         <p style={{ fontSize: '20px', fontWeight: 700, color: '#EF4444', margin: 0 }}>
-          {formatCurrency(total, currency)}
+          {formatCurrency(total)}
         </p>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>

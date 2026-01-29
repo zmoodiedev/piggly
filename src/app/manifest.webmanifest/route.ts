@@ -4,8 +4,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const manifest = {
-    name: 'inDebt - Personal Budgeting App',
-    short_name: 'inDebt',
+    name: 'Piggly - Personal Budgeting App',
+    short_name: 'Piggly',
     description: 'Personal budgeting app for managing debts, bills, and savings goals',
     start_url: '/',
     display: 'standalone',

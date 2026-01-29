@@ -1,8 +1,7 @@
 'use client';
 
 import { Income } from '@/types';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { incomeCategoryIcons, incomeCategoryLabels } from '@/lib/categories';
 import { format } from 'date-fns';
 
@@ -13,11 +12,8 @@ interface IncomeCardProps {
 }
 
 export default function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps) {
-  const { currency } = useCurrency();
-
   const formatAmount = (amount: number) => {
-    const sourceCurrency = income.currency || 'CAD';
-    return formatCurrency(convertCurrency(amount, sourceCurrency, currency), currency);
+    return formatCurrency(amount, income.currency || 'CAD');
   };
 
   const formatDate = (date: Date | string) => {

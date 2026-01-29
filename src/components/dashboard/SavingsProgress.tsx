@@ -1,8 +1,7 @@
 'use client';
 
 import { SavingsGoal } from '@/types';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { calculatePercentage } from '@/lib/utils';
 
 interface SavingsProgressProps {
@@ -10,8 +9,6 @@ interface SavingsProgressProps {
 }
 
 export default function SavingsProgress({ goals }: SavingsProgressProps) {
-  const { currency } = useCurrency();
-
   return (
     <div
       style={{
@@ -38,8 +35,8 @@ export default function SavingsProgress({ goals }: SavingsProgressProps) {
         ) : (
           goals.map((goal) => {
             const progress = calculatePercentage(goal.currentAmount, goal.targetAmount);
-            const currentConverted = convertCurrency(goal.currentAmount, 'CAD', currency);
-            const targetConverted = convertCurrency(goal.targetAmount, 'CAD', currency);
+            const currentConverted = goal.currentAmount;
+            const targetConverted = goal.targetAmount;
 
             return (
               <div key={goal.id} style={{ padding: '12px', background: '#F8F9FC', borderRadius: '12px' }}>
@@ -82,10 +79,10 @@ export default function SavingsProgress({ goals }: SavingsProgressProps) {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
                   <span style={{ color: '#9CA3AF' }}>
-                    {formatCurrency(currentConverted, currency)}
+                    {formatCurrency(currentConverted)}
                   </span>
                   <span style={{ color: '#9CA3AF' }}>
-                    {formatCurrency(targetConverted, currency)}
+                    {formatCurrency(targetConverted)}
                   </span>
                 </div>
               </div>

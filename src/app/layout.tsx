@@ -15,12 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "inDebt - Personal Budgeting App",
+  title: "Piggly - Personal Budgeting App",
   description: "Personal budgeting app for managing debts, bills, and savings goals",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "inDebt",
+    title: "Piggly",
   },
   formatDetection: {
     telephone: false,

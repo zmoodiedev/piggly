@@ -9,8 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { useCurrency } from '@/lib/context/CurrencyContext';
-import { formatCurrency, convertCurrency } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 
 interface SpendingDataPoint {
   month: string;
@@ -23,16 +22,8 @@ interface SpendingChartProps {
 }
 
 export default function SpendingChart({ data }: SpendingChartProps) {
-  const { currency } = useCurrency();
-
-  const convertedData = data.map((point) => ({
-    ...point,
-    income: convertCurrency(point.income, 'CAD', currency),
-    expenses: convertCurrency(point.expenses, 'CAD', currency),
-  }));
-
   const formatTooltipValue = (value: number | undefined) => {
-    return formatCurrency(value ?? 0, currency);
+    return formatCurrency(value ?? 0);
   };
 
   return (
@@ -64,7 +55,7 @@ export default function SpendingChart({ data }: SpendingChartProps) {
       <div style={{ height: '256px', minWidth: 0 }}>
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <LineChart
-            data={convertedData}
+            data={data}
             margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />

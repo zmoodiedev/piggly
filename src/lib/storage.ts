@@ -1,4 +1,4 @@
-import { Debt, Bill, SavingsGoal, Income, Transaction, Currency } from '@/types';
+import { Debt, Bill, SavingsGoal, Income, Transaction } from '@/types';
 import { isDemoMode } from '@/lib/demo/demoState';
 import * as demoStore from '@/lib/demo/demoStore';
 
@@ -7,7 +7,6 @@ const STORAGE_KEYS = {
   BILLS: 'finance_dashboard_bills',
   SAVINGS_GOALS: 'finance_dashboard_savings_goals',
   TRANSACTIONS: 'finance_dashboard_transactions',
-  CURRENCY: 'finance_dashboard_currency',
   SETTINGS: 'finance_dashboard_settings',
 } as const;
 
@@ -252,11 +251,6 @@ export async function saveTransactionsToSheet(transactions: Transaction[]): Prom
   }
 }
 
-// Currency preference
-export const getCurrency = (): Currency =>
-  getFromStorage(STORAGE_KEYS.CURRENCY, 'CAD');
-export const saveCurrency = (currency: Currency) =>
-  setToStorage(STORAGE_KEYS.CURRENCY, currency);
 
 // Generate unique ID
 export function generateId(): string {
