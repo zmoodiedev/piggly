@@ -152,6 +152,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     href={item.href}
                     className={`sidebar-nav-link ${isActive ? 'active' : ''}`}
                     title={item.label}
+                    onClick={() => { if (isOpen) onToggle(); }}
                   >
                     <span className="sidebar-nav-icon">{item.icon}</span>
                     <span className={`sidebar-nav-label ${isExpanded ? 'expanded' : 'collapsed'}`}>
