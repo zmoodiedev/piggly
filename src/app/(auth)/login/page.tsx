@@ -24,86 +24,49 @@ function LoginContent() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #1A1D2E 0%, #2D3348 50%, #1A1D2E 100%)',
+      background: '#1A1D2E',
       padding: '20px',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Decorative background elements */}
+      {/* Background image */}
       <div style={{
         position: 'absolute',
-        top: '-20%',
-        right: '-10%',
-        width: '600px',
-        height: '600px',
-        background: 'radial-gradient(circle, rgba(255, 123, 156, 0.15) 0%, transparent 70%)',
-        borderRadius: '50%',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '-30%',
-        left: '-15%',
-        width: '800px',
-        height: '800px',
-        background: 'radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%)',
-        borderRadius: '50%',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '20%',
-        left: '10%',
-        width: '300px',
-        height: '300px',
-        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
-        borderRadius: '50%',
+        inset: 0,
+        backgroundImage: 'url(/login-bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        opacity: 0.7,
         pointerEvents: 'none',
       }} />
 
-      {/* Floating card */}
+      {/* Frosted glass card */}
       <div style={{
-        background: 'rgba(255, 255, 255, 0.98)',
+        background: 'rgba(20, 21, 42, 0.52)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.18)',
         borderRadius: '24px',
         padding: '48px 40px',
         maxWidth: '420px',
         width: '100%',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
         textAlign: 'center',
         position: 'relative',
         zIndex: 1,
         animation: 'fadeInUp 0.6s ease-out',
       }}>
         {/* Logo */}
-        <div style={{
-          width: '72px',
-          height: '72px',
-          background: 'linear-gradient(135deg, #FF7B9C 0%, #FF6B9D 100%)',
-          borderRadius: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 28px',
-          boxShadow: '0 10px 30px -5px rgba(255, 123, 156, 0.4)',
-        }}>
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
-        </div>
-
-        <h1 style={{
-          fontSize: '32px',
-          fontWeight: 700,
-          color: '#1A1D2E',
-          margin: '0 0 8px 0',
-          letterSpacing: '-0.5px',
-        }}>
-          Piggly
-        </h1>
+        <img
+          src="/piggly_logo.png"
+          alt="Piggly"
+          width={180}
+          height={180}
+          style={{ margin: '0 auto 12px', display: 'block' }}
+        />
 
         <p style={{
-          color: '#6B7280',
+          color: 'rgba(255, 255, 255, 0.65)',
           margin: '0 0 36px 0',
           fontSize: '15px',
           lineHeight: 1.5,
@@ -114,11 +77,12 @@ function LoginContent() {
 
         {error && (
           <div style={{
-            background: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)',
+            background: 'rgba(220, 38, 38, 0.2)',
+            border: '1px solid rgba(220, 38, 38, 0.3)',
             borderRadius: '12px',
             padding: '14px 18px',
             marginBottom: '24px',
-            color: '#DC2626',
+            color: '#FCA5A5',
             fontSize: '14px',
             fontWeight: 500,
             display: 'flex',
@@ -145,24 +109,24 @@ function LoginContent() {
             justifyContent: 'center',
             gap: '12px',
             padding: '16px 24px',
-            background: 'white',
-            border: '2px solid #E5E7EB',
+            background: 'rgba(255, 255, 255, 0.15)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
             borderRadius: '14px',
             fontSize: '16px',
             fontWeight: 600,
-            color: '#1A1D2E',
+            color: '#FFFFFF',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
           }}
           onMouseOver={(e) => {
-            e.currentTarget.style.background = '#F8F9FC';
-            e.currentTarget.style.borderColor = '#FF7B9C';
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.22)';
+            e.currentTarget.style.borderColor = 'rgba(255, 123, 156, 0.5)';
             e.currentTarget.style.transform = 'translateY(-2px)';
             e.currentTarget.style.boxShadow = '0 8px 20px -5px rgba(255, 123, 156, 0.3)';
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.background = 'white';
-            e.currentTarget.style.borderColor = '#E5E7EB';
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
             e.currentTarget.style.transform = 'translateY(0)';
             e.currentTarget.style.boxShadow = 'none';
           }}
@@ -194,9 +158,9 @@ function LoginContent() {
           gap: '12px',
           margin: '20px 0 0',
         }}>
-          <div style={{ flex: 1, height: '1px', background: '#E5E7EB' }} />
-          <span style={{ fontSize: '13px', color: '#9CA3AF', fontWeight: 500 }}>or</span>
-          <div style={{ flex: 1, height: '1px', background: '#E5E7EB' }} />
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.15)' }} />
+          <span style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.4)', fontWeight: 500 }}>or</span>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.15)' }} />
         </div>
 
         <button
@@ -236,11 +200,11 @@ function LoginContent() {
         <div style={{
           marginTop: '32px',
           paddingTop: '24px',
-          borderTop: '1px solid #F3F4F6',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
         }}>
           <p style={{
             fontSize: '13px',
-            color: '#9CA3AF',
+            color: 'rgba(255, 255, 255, 0.4)',
             margin: 0,
           }}>
             Explore with sample data or sign in to your account

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import './Sidebar.css';
@@ -131,9 +132,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         <div className="sidebar-logo">
           <div className="sidebar-logo-inner">
             <div className="sidebar-logo-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
+              <Image src="/piggly_icon.png" alt="Piggly Logo" width={32} height={32} />
             </div>
             <span className={`sidebar-logo-text ${isExpanded ? 'expanded' : 'collapsed'}`}>
               Piggly
