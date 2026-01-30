@@ -6,6 +6,7 @@ import { fetchIncome, saveIncomeToSheet } from '@/lib/storage';
 import { useMonth } from '@/lib/context/MonthContext';
 import { formatCurrency } from '@/lib/currency';
 import { IncomeCard, IncomeForm } from '@/components/income';
+import { ConfirmModal } from '@/components/ui';
 import { format, isWithinInterval } from 'date-fns';
 import '@/components/income/Income.css';
 
@@ -15,6 +16,7 @@ export default function IncomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingIncome, setEditingIncome] = useState<Income | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const loadIncome = async () => {
@@ -49,12 +51,16 @@ export default function IncomePage() {
     setShowForm(true);
   };
 
-  const handleDeleteIncome = async (id: string) => {
-    if (confirm('Are you sure you want to delete this income entry?')) {
-      const updatedIncome = income.filter(i => i.id !== id);
-      setIncome(updatedIncome);
-      await saveIncomeToSheet(updatedIncome);
-    }
+  const handleDeleteIncome = (id: string) => {
+    setConfirmDelete(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
+    const updatedIncome = income.filter(i => i.id !== confirmDelete);
+    setIncome(updatedIncome);
+    await saveIncomeToSheet(updatedIncome);
+    setConfirmDelete(null);
   };
 
   const handleCloseForm = () => {
@@ -161,6 +167,15 @@ export default function IncomePage() {
           income={editingIncome}
           onSave={handleSaveIncome}
           onClose={handleCloseForm}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDelete && (
+        <ConfirmModal
+          message="Are you sure you want to delete this income entry?"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDelete(null)}
         />
       )}
     </div>

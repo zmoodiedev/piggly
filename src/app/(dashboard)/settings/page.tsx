@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { isDemoMode } from '@/lib/demo/demoState';
+import { ConfirmModal } from '@/components/ui';
 import './Settings.css';
 
 interface HouseholdMember {
@@ -31,6 +32,7 @@ export default function SettingsPage() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSavingName, setIsSavingName] = useState(false);
 
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [inviteEmail, setInviteEmail] = useState('');
   const [isInviting, setIsInviting] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
@@ -141,8 +143,14 @@ export default function SettingsPage() {
     }
   };
 
-  const handleRemoveMember = async (email: string) => {
-    if (!confirm(`Remove ${email} from the household?`)) return;
+  const handleRemoveMember = (email: string) => {
+    setConfirmRemove(email);
+  };
+
+  const handleConfirmRemove = async () => {
+    const email = confirmRemove;
+    if (!email) return;
+    setConfirmRemove(null);
 
     if (isDemoMode()) {
       setHouseholdData(prev => prev ? { ...prev, members: prev.members.filter(m => m.email !== email) } : prev);
@@ -327,6 +335,14 @@ export default function SettingsPage() {
           </form>
         </div>
       </section>
+      {/* Remove Member Confirmation Modal */}
+      {confirmRemove && (
+        <ConfirmModal
+          message={`Remove ${confirmRemove} from the household?`}
+          onConfirm={handleConfirmRemove}
+          onCancel={() => setConfirmRemove(null)}
+        />
+      )}
     </div>
   );
 }

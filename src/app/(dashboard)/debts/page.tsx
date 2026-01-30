@@ -5,6 +5,7 @@ import { Debt } from '@/types';
 import { fetchDebts, saveDebtsToExcel } from '@/lib/storage';
 import { formatCurrency } from '@/lib/currency';
 import { DebtCard, DebtForm } from '@/components/debts';
+import { ConfirmModal } from '@/components/ui';
 import '@/components/debts/Debts.css';
 
 export default function DebtsPage() {
@@ -12,6 +13,7 @@ export default function DebtsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const loadDebts = async () => {
@@ -42,12 +44,16 @@ export default function DebtsPage() {
     setShowForm(true);
   };
 
-  const handleDeleteDebt = async (id: string) => {
-    if (confirm('Are you sure you want to delete this debt?')) {
-      const updatedDebts = debts.filter(d => d.id !== id);
-      setDebts(updatedDebts);
-      await saveDebtsToExcel(updatedDebts);
-    }
+  const handleDeleteDebt = (id: string) => {
+    setConfirmDelete(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
+    const updatedDebts = debts.filter(d => d.id !== confirmDelete);
+    setDebts(updatedDebts);
+    await saveDebtsToExcel(updatedDebts);
+    setConfirmDelete(null);
   };
 
   const handleCloseForm = () => {
@@ -193,6 +199,15 @@ export default function DebtsPage() {
           debt={editingDebt}
           onSave={handleSaveDebt}
           onClose={handleCloseForm}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDelete && (
+        <ConfirmModal
+          message="Are you sure you want to delete this debt?"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDelete(null)}
         />
       )}
     </div>

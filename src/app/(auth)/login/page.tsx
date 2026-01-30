@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Image from 'next/image';
 import { setDemoMode } from '@/lib/demo/demoState';
 
 function LoginContent() {
@@ -57,11 +58,12 @@ function LoginContent() {
         animation: 'fadeInUp 0.6s ease-out',
       }}>
         {/* Logo */}
-        <img
+        <Image
           src="/piggly_logo.png"
           alt="Piggly"
           width={180}
           height={180}
+          priority
           style={{ margin: '0 auto 12px', display: 'block' }}
         />
 

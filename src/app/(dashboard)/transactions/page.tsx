@@ -8,6 +8,7 @@ import { formatCurrency } from '@/lib/currency';
 import { expenseCategoryLabels } from '@/lib/categories';
 import { TransactionCard, TransactionForm } from '@/components/transactions';
 import { ImportModal } from '@/components/import';
+import { ConfirmModal } from '@/components/ui';
 import { isWithinInterval } from 'date-fns';
 import '@/components/transactions/Transactions.css';
 
@@ -20,6 +21,7 @@ export default function TransactionsPage() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [filterCategory, setFilterCategory] = useState<ExpenseCategory | 'all'>('all');
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -58,12 +60,16 @@ export default function TransactionsPage() {
     setShowForm(true);
   };
 
-  const handleDeleteTransaction = async (id: string) => {
-    if (confirm('Are you sure you want to delete this transaction?')) {
-      const updatedTransactions = transactions.filter(t => t.id !== id);
-      setTransactions(updatedTransactions);
-      await saveTransactionsToSheet(updatedTransactions);
-    }
+  const handleDeleteTransaction = (id: string) => {
+    setConfirmDelete(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
+    const updatedTransactions = transactions.filter(t => t.id !== confirmDelete);
+    setTransactions(updatedTransactions);
+    await saveTransactionsToSheet(updatedTransactions);
+    setConfirmDelete(null);
   };
 
   const handleCloseForm = () => {
@@ -232,6 +238,15 @@ export default function TransactionsPage() {
           transaction={editingTransaction}
           onSave={handleSaveTransaction}
           onClose={handleCloseForm}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDelete && (
+        <ConfirmModal
+          message="Are you sure you want to delete this transaction?"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDelete(null)}
         />
       )}
 

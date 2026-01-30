@@ -5,6 +5,7 @@ import { SavingsGoal } from '@/types';
 import { fetchSavings, saveSavingsToSheet } from '@/lib/storage';
 import { formatCurrency } from '@/lib/currency';
 import { SavingsCard, SavingsForm, AddMoneyModal } from '@/components/savings';
+import { ConfirmModal } from '@/components/ui';
 import '@/components/savings/Savings.css';
 
 export default function SavingsPage() {
@@ -13,6 +14,7 @@ export default function SavingsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState<SavingsGoal | null>(null);
   const [addMoneyGoal, setAddMoneyGoal] = useState<SavingsGoal | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSavings = async () => {
@@ -47,12 +49,16 @@ export default function SavingsPage() {
     setShowForm(true);
   };
 
-  const handleDeleteGoal = async (id: string) => {
-    if (confirm('Are you sure you want to delete this savings goal?')) {
-      const updatedGoals = goals.filter(g => g.id !== id);
-      setGoals(updatedGoals);
-      await saveSavingsToSheet(updatedGoals);
-    }
+  const handleDeleteGoal = (id: string) => {
+    setConfirmDelete(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
+    const updatedGoals = goals.filter(g => g.id !== confirmDelete);
+    setGoals(updatedGoals);
+    await saveSavingsToSheet(updatedGoals);
+    setConfirmDelete(null);
   };
 
   const handleAddMoney = (goal: SavingsGoal) => {
@@ -165,6 +171,15 @@ export default function SavingsPage() {
           goal={editingGoal}
           onSave={handleSaveGoal}
           onClose={handleCloseForm}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDelete && (
+        <ConfirmModal
+          message="Are you sure you want to delete this savings goal?"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDelete(null)}
         />
       )}
 

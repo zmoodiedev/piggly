@@ -5,6 +5,7 @@ import { Bill } from '@/types';
 import { fetchBills, createBill, updateBill, deleteBill } from '@/lib/storage';
 import { formatCurrency } from '@/lib/currency';
 import { BillCard, BillForm } from '@/components/bills';
+import { ConfirmModal } from '@/components/ui';
 import '@/components/bills/Bills.css';
 
 export default function BillsPage() {
@@ -12,6 +13,7 @@ export default function BillsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingBill, setEditingBill] = useState<Bill | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const loadBills = async () => {
@@ -73,15 +75,19 @@ export default function BillsPage() {
     setShowForm(true);
   };
 
-  const handleDeleteBill = async (id: string) => {
-    if (confirm('Are you sure you want to delete this bill?')) {
-      const success = await deleteBill(id);
-      if (success) {
-        setBills(bills.filter(b => b.id !== id));
-      } else {
-        alert('Failed to delete bill. Please try again.');
-      }
+  const handleDeleteBill = (id: string) => {
+    setConfirmDelete(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
+    const success = await deleteBill(confirmDelete);
+    if (success) {
+      setBills(bills.filter(b => b.id !== confirmDelete));
+    } else {
+      alert('Failed to delete bill. Please try again.');
     }
+    setConfirmDelete(null);
   };
 
   const handleTogglePaid = async (bill: Bill) => {
@@ -249,6 +255,15 @@ export default function BillsPage() {
           bill={editingBill}
           onSave={handleSaveBill}
           onClose={handleCloseForm}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDelete && (
+        <ConfirmModal
+          message="Are you sure you want to delete this bill?"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDelete(null)}
         />
       )}
     </div>
