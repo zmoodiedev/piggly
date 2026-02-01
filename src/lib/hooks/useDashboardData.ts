@@ -55,8 +55,15 @@ export function useDashboardData() {
   const totalSavings = savings.reduce((sum, s) => sum + s.currentAmount, 0);
   const savingsTarget = savings.reduce((sum, s) => sum + s.targetAmount, 0);
 
-  const unpaidBills = bills.filter((b) => !b.isPaid);
-  const paidBills = bills.filter((b) => b.isPaid);
+  // Derive month-aware paid status
+  const billsForMonth = bills.map(bill => {
+    if (!bill.lastPaidDate) return { ...bill, isPaid: false };
+    const paidDate = bill.lastPaidDate instanceof Date ? bill.lastPaidDate : new Date(bill.lastPaidDate);
+    return { ...bill, isPaid: paidDate >= monthStart && paidDate <= monthEnd };
+  });
+
+  const unpaidBills = billsForMonth.filter((b) => !b.isPaid);
+  const paidBills = billsForMonth.filter((b) => b.isPaid);
 
   // Calculate debt payoff progress
   const totalOriginalDebt = debts.reduce((sum, d) => sum + d.totalAmount, 0);
@@ -80,8 +87,19 @@ export function useDashboardData() {
   // Calculate minimum debt payments (sum of all minimum payments)
   const totalMinDebtPayments = debts.reduce((sum, d) => sum + d.minimumPayment, 0);
 
-  // Calculate money left after bills and minimum debt payments
-  const moneyLeftAfterBills = totalMonthlyIncome - totalBillsAmount - totalMinDebtPayments;
+  // Calculate money left: income minus bills already paid this month minus min debt payments
+  const paidBillsAmount = paidBills.reduce((sum, b) => {
+    switch (b.frequency) {
+      case 'quarterly':
+        return sum + b.amount / 3;
+      case 'annually':
+        return sum + b.amount / 12;
+      case 'monthly':
+      default:
+        return sum + b.amount;
+    }
+  }, 0);
+  const moneyLeftAfterBills = totalMonthlyIncome - paidBillsAmount - totalMinDebtPayments;
 
   // Generate monthly income vs expenses data for the last 6 months from selected month
   const monthlySpending = [];

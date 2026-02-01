@@ -75,7 +75,7 @@ export default function Home() {
         <MetricCard
           title="Money Left"
           value={formatAmount(metrics.moneyLeftAfterBills)}
-          change="After bills & min payments"
+          change={`${metrics.paidBillsCount} of ${metrics.paidBillsCount + metrics.unpaidBillsCount} bills paid`}
           changeType={metrics.moneyLeftAfterBills >= 0 ? 'positive' : 'negative'}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2">

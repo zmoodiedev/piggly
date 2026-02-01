@@ -37,7 +37,7 @@ export interface Bill {
   frequency: 'monthly' | 'quarterly' | 'annually';
   isPaid: boolean;
   isAutoPay: boolean;
-  lastPaidDate?: Date;
+  lastPaidDate?: Date | null;
   currency: Currency;
   createdAt: Date;
   updatedAt: Date;

@@ -1,14 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Bill } from '@/types';
 import { fetchBills, createBill, updateBill, deleteBill } from '@/lib/storage';
 import { formatCurrency } from '@/lib/currency';
 import { BillCard, BillForm } from '@/components/bills';
 import { ConfirmModal } from '@/components/ui';
+import { useMonth } from '@/lib/context/MonthContext';
 import '@/components/bills/Bills.css';
 
+function isBillPaidForMonth(bill: Bill, monthStart: Date, monthEnd: Date): boolean {
+  if (!bill.lastPaidDate) return false;
+  const paidDate = bill.lastPaidDate instanceof Date ? bill.lastPaidDate : new Date(bill.lastPaidDate);
+  return paidDate >= monthStart && paidDate <= monthEnd;
+}
+
 export default function BillsPage() {
+  const { monthStart, monthEnd, isCurrentMonth } = useMonth();
   const [bills, setBills] = useState<Bill[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -19,13 +27,13 @@ export default function BillsPage() {
     const loadBills = async () => {
       const storedBills = await fetchBills();
 
-      // Process auto-pay bills: mark as paid if due date has passed
+      // Process auto-pay bills for the current real month only
       const today = new Date();
       const currentDay = today.getDate();
 
       const autoPayUpdates: Promise<boolean>[] = [];
       const processedBills = storedBills.map(bill => {
-        if (bill.isAutoPay && !bill.isPaid && currentDay > bill.dueDate) {
+        if (bill.isAutoPay && !isBillPaidForMonth(bill, monthStart, monthEnd) && currentDay > bill.dueDate) {
           const updates = {
             isPaid: true,
             lastPaidDate: new Date(),
@@ -47,6 +55,14 @@ export default function BillsPage() {
     };
     loadBills();
   }, []);
+
+  // Derive month-aware paid status for display
+  const billsForMonth = useMemo(() => {
+    return bills.map(bill => ({
+      ...bill,
+      isPaid: isBillPaidForMonth(bill, monthStart, monthEnd),
+    }));
+  }, [bills, monthStart, monthEnd]);
 
   const handleSaveBill = async (bill: Bill) => {
     if (editingBill) {
@@ -91,16 +107,18 @@ export default function BillsPage() {
   };
 
   const handleTogglePaid = async (bill: Bill) => {
+    const currentlyPaidForMonth = isBillPaidForMonth(bill, monthStart, monthEnd);
+    // Use a date within the selected month so it registers as paid for that month
+    const paidDate = isCurrentMonth ? new Date() : new Date(monthStart.getFullYear(), monthStart.getMonth(), Math.min(bill.dueDate, monthEnd.getDate()));
     const updates = {
-      isPaid: !bill.isPaid,
-      lastPaidDate: !bill.isPaid ? new Date() : bill.lastPaidDate,
+      isPaid: !currentlyPaidForMonth,
+      lastPaidDate: !currentlyPaidForMonth ? paidDate : null,
       updatedAt: new Date(),
     };
     const success = await updateBill(bill.id, updates);
     if (success) {
-      setBills(bills.map(b => b.id === bill.id ? { ...bill, ...updates } : b));
+      setBills(bills.map(b => b.id === bill.id ? { ...b, ...updates } : b));
     }
-    // Silent fail for toggle - less critical
   };
 
   const handleCloseForm = () => {
@@ -108,9 +126,9 @@ export default function BillsPage() {
     setEditingBill(null);
   };
 
-  // Split bills by currency
-  const cadBills = bills.filter(b => (b.currency || 'CAD') === 'CAD');
-  const usdBills = bills.filter(b => b.currency === 'USD');
+  // Split bills by currency (using month-aware paid status)
+  const cadBills = billsForMonth.filter(b => (b.currency || 'CAD') === 'CAD');
+  const usdBills = billsForMonth.filter(b => b.currency === 'USD');
 
   // Calculate summary metrics for each currency
   const cadTotal = cadBills.reduce((sum, b) => sum + b.amount, 0);
